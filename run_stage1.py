@@ -1,9 +1,9 @@
 """
 run_stage1.py
 -------------
-Entry point for Stage 1: Data pipeline + Bayesian HMM fitting.
+Data pipeline and Bayesian HMM fitting for market regime detection.
 
-Run this after installing requirements:
+Usage:
     pip install -r requirements.txt
     python run_stage1.py
 
@@ -15,14 +15,6 @@ What this does:
   5. Computes regime posteriors on all splits
   6. Generates and saves all visualization plots
   7. Saves the fitted model to disk
-
-Stage 1 is DONE when:
-  - The transition matrix shows high diagonal values (>0.85)
-    meaning regimes are persistent
-  - The emission distributions are visually distinct across regimes
-    (Bull = positive returns + low vol, Bear = negative + high vol)
-  - Online and batch posteriors match (verified by test suite)
-  - plots/01_regime_posterior.png shows economically sensible regimes
 """
 
 import logging
@@ -48,7 +40,7 @@ FIGURES_DIR = OUTPUT_DIR / "figures" / "stage1"
 
 def main():
     logger.info("=" * 60)
-    logger.info("STAGE 1: Bayesian HMM Regime Detection")
+    logger.info("Bayesian HMM Regime Detection")
     logger.info("=" * 60)
 
     # ── Step 1: Load data ──────────────────────────────────────────────────
@@ -63,7 +55,7 @@ def main():
 
     logger.info(f"  Prices:   {prices.shape}  ({prices.index[0].date()} to {prices.index[-1].date()})")
     logger.info(f"  Features: {features.shape}")
-    logger.info(f"  HMM Train/Val/Test: {hmm_train.shape} / {hmm_val.shape} / {hmm_test.shape}")
+    logger.info(f"  Train/Val/Test: {hmm_train.shape} / {hmm_val.shape} / {hmm_test.shape}")
 
     # ── Step 2: Select number of regimes via BIC ───────────────────────────
     logger.info("\n[2/5] Selecting number of regimes via BIC...")
@@ -73,24 +65,21 @@ def main():
     logger.info(f"  BIC scores: {bic_scores}")
     logger.info(f"  Selected K={best_k}")
 
-    # Override with 3 if BIC gives unexpected result (common on synthetic/limited data)
     final_k = best_k if best_k in [2, 3, 4] else 3
     if final_k != best_k:
         logger.warning(f"  BIC selected K={best_k}, overriding with K={final_k} (domain knowledge)")
 
     # ── Step 3: Fit final HMM ──────────────────────────────────────────────
-    logger.info(f"\n[3/5] Fitting final HMM (K={final_k})...")
+    logger.info(f"\n[3/5] Fitting HMM (K={final_k})...")
     hmm = BayesianMarketHMM(n_regimes=final_k, n_iter=100, random_state=42)
     hmm.fit(hmm_train)
 
     logger.info(hmm.summary())
 
-    # Validate transition matrix persistence
     diag_mean = np.diag(hmm.model.transmat_).mean()
     logger.info(f"  Mean diagonal (persistence): {diag_mean:.3f}  (target: >0.85)")
     if diag_mean < 0.85:
-        logger.warning("  LOW PERSISTENCE — regimes may be switching too rapidly. "
-                       "Consider increasing n_iter or using fewer features.")
+        logger.warning("  Low persistence — regimes may be switching too rapidly.")
 
     # ── Step 4: Compute posteriors ─────────────────────────────────────────
     logger.info("\n[4/5] Computing posteriors on all splits...")
@@ -100,7 +89,6 @@ def main():
 
     T_train = len(hmm_train)
     T_val   = len(hmm_val)
-    T_test  = len(hmm_test)
 
     posteriors_train = posteriors_all[:T_train]
     posteriors_val   = posteriors_all[T_train:T_train+T_val]
@@ -109,7 +97,6 @@ def main():
     logger.info(f"  Posterior shapes — Train: {posteriors_train.shape}, "
                 f"Val: {posteriors_val.shape}, Test: {posteriors_test.shape}")
 
-    # Regime distribution summary
     dominant_regime = posteriors_all.argmax(axis=1)
     for k in range(final_k):
         pct = (dominant_regime == k).mean() * 100
@@ -122,13 +109,11 @@ def main():
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     hmm.save(str(MODEL_PATH))
 
-    # Save posteriors as numpy arrays (used in Stage 3 by IQN agent)
     np.save(OUTPUT_DIR / "posteriors_train.npy", posteriors_train)
     np.save(OUTPUT_DIR / "posteriors_val.npy",   posteriors_val)
     np.save(OUTPUT_DIR / "posteriors_test.npy",  posteriors_test)
     logger.info(f"  Posteriors saved to {OUTPUT_DIR}/")
 
-    # Generate visualizations
     viterbi_all = hmm.get_viterbi_sequence(hmm_all)
     feature_names = [
         f"{a}_{f}" for a in ["SPY","QQQ","TLT","GLD","SHY"]
@@ -139,22 +124,22 @@ def main():
     prices_aligned = prices.loc[prices.index.isin(dates_all)]
 
     generate_all_plots(
-        hmm_model     = hmm,
-        posteriors    = posteriors_all,
-        viterbi_states= viterbi_all,
-        prices        = prices_aligned,
-        feature_names = feature_names,
-        bic_scores    = bic_scores,
-        output_dir    = str(FIGURES_DIR),
+        hmm_model      = hmm,
+        posteriors     = posteriors_all,
+        viterbi_states = viterbi_all,
+        prices         = prices_aligned,
+        feature_names  = feature_names,
+        bic_scores     = bic_scores,
+        output_dir     = str(FIGURES_DIR),
     )
 
-    # ── Stage 1 Success Criteria ───────────────────────────────────────────
+    # ── Success Criteria ───────────────────────────────────────────────────
     logger.info("\n" + "=" * 60)
-    logger.info("STAGE 1 COMPLETE — Success Criteria Check")
+    logger.info("Results")
     logger.info("=" * 60)
 
     checks = {
-        "Model fitted successfully":     hmm._is_fitted,
+        "Model fitted":                  hmm._is_fitted,
         "Posteriors sum to 1 (train)":   abs(posteriors_train.sum(axis=1).mean() - 1.0) < 1e-4,
         "Posteriors non-negative":        (posteriors_all >= 0).all(),
         "Regime persistence > 0.85":     diag_mean > 0.85,
@@ -172,9 +157,9 @@ def main():
             all_passed = False
 
     if all_passed:
-        logger.info("\n  ALL CHECKS PASSED. Ready for Stage 2 (iTransformer Encoder).")
+        logger.info("\n  All checks passed.")
     else:
-        logger.warning("\n  Some checks failed — review logs and plots before proceeding.")
+        logger.warning("\n  Some checks failed — review logs and plots.")
 
     return hmm, posteriors_train, posteriors_val, posteriors_test
 

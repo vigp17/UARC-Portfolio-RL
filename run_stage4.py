@@ -1,9 +1,9 @@
 """
 run_stage4.py
 -------------
-Stage 4: Backtesting all 5 systems on the holdout test set (2021-2024).
+Backtest all systems on the holdout test set (2021-2024).
 
-Run after Stage 3:
+Run after training:
     python run_stage4.py
 """
 
@@ -230,7 +230,7 @@ def main():
 
     # ── Success criteria ───────────────────────────────────────────────────
     logger.info("\n" + "=" * 60)
-    logger.info("STAGE 4 COMPLETE — Success Criteria Check")
+    logger.info("Backtest complete.")
     logger.info("=" * 60)
 
     checks = {
@@ -263,7 +263,7 @@ def main():
             f"CVaR: {r.cvar_5:.4f}  MaxDD: {r.max_drawdown:.1%}{marker}"
         )
 
-    logger.info("\n  ALL CHECKS PASSED. Ready for Stage 5 (Paper Writing).")
+    logger.info("\n  All checks passed.")
     return results
 
 

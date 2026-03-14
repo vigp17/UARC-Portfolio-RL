@@ -63,9 +63,9 @@ def load_data():
     logger.info("STAGE 3: Multi-Agent Training (4 agents x 5 seeds)")
     logger.info("=" * 60)
 
-    logger.info("\n[1/4] Loading Stage 1 + Stage 2 outputs...")
+    logger.info("\n[1/4] Loading data...")
 
-    # Load numpy outputs from Stage 1 and Stage 2
+    # Load precomputed features and posteriors
     enc_features_train = np.load("outputs/enc_features_train.npy")
     enc_features_val   = np.load("outputs/enc_features_val.npy")
     posteriors_train   = np.load("outputs/posteriors_train.npy")
@@ -80,7 +80,7 @@ def load_data():
     prices_df  = pd.read_csv(prices_csv, index_col=0, parse_dates=True)
     prices_all = prices_df.values.astype(np.float32)
 
-    # Use same temporal split as Stage 1/2
+    # Temporal split
     # Train: 2000-2017, Val: 2018-2020
     # Infer split sizes from posterior shapes
     n_train = len(posteriors_train)
@@ -286,11 +286,10 @@ def main():
         plot_summary(df)
 
     logger.info("\n" + "=" * 60)
-    logger.info("STAGE 3 COMPLETE — Ready for Stage 4 (Backtesting)")
+    logger.info("Training complete.")
     logger.info("=" * 60)
 
-    # Print best seed per agent for Stage 4
-    logger.info("\n  Best checkpoints to use in Stage 4:")
+    logger.info("\n  Best checkpoints:")
     for at in agent_types:
         sub      = df[df["agent_type"] == at.value]
         best_row = sub.loc[sub["best_val_sharpe"].idxmax()]

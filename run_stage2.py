@@ -1,26 +1,19 @@
 """
 run_stage2.py
 -------------
-Stage 2: iTransformer Encoder validation and visualization.
+iTransformer Encoder training and validation.
 
-Run after Stage 1:
+Usage:
     python run_stage2.py
 
 What this does:
-  1. Loads Stage 1 outputs (prices, posteriors)
+  1. Loads price data and HMM posteriors
   2. Builds encoder features for all splits
   3. Fits normalizer on training data
   4. Instantiates and validates the iTransformerEncoder
   5. Runs a forward pass on real data — checks shapes and values
   6. Generates attention weight visualization (cross-asset correlations)
-  7. Saves encoder + normalizer to disk for Stage 3
-
-Stage 2 is DONE when:
-  - All shape checks pass
-  - No NaN/Inf in encoder output
-  - Attention heatmap shows economically sensible asset-pair weights
-    (e.g. SPY-QQQ high attention, TLT-SPY negative correlation visible)
-  - Encoder + normalizer saved to outputs/models/
+  7. Saves encoder + normalizer to disk
 """
 
 import logging
@@ -49,23 +42,23 @@ logger = logging.getLogger(__name__)
 OUTPUT_DIR  = Path("outputs")
 MODEL_DIR   = OUTPUT_DIR / "models"
 FIGURES_DIR = OUTPUT_DIR / "figures" / "stage2"
-N_FEATURES  = 6    # per asset features
+N_FEATURES  = 6
 D_MODEL     = 64
 N_HEADS     = 4
 N_LAYERS    = 2
-LOOKBACK_T  = LOOKBACK   # 60 days
+LOOKBACK_T  = LOOKBACK
 
 
 def main():
     logger.info("=" * 60)
-    logger.info("STAGE 2: iTransformer Encoder")
+    logger.info("iTransformer Encoder")
     logger.info("=" * 60)
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
     # ── Step 1: Load data ──────────────────────────────────────────────────
-    logger.info("\n[1/6] Loading data and Stage 1 outputs...")
+    logger.info("\n[1/6] Loading data...")
     data   = load_all(cache=True)
     prices = data["prices"]
 
@@ -80,16 +73,14 @@ def main():
     X_all = build_encoder_features(prices, assets=ASSETS)
     logger.info(f"  Full feature array: {X_all.shape}")
 
-    # Align with splits (same logic as data_loader)
     train_end  = data["train"].index[-1]
     val_end    = data["val"].index[-1]
 
-    # Map feature rows back to dates — align by length from the end
     valid_dates = prices.index[-len(X_all):]
     X_df        = pd.DataFrame(X_all.reshape(len(X_all), -1), index=valid_dates)
 
     X_train_df = X_df.loc[:train_end]
-    X_val_df   = X_df.loc[train_end:val_end].iloc[1:]   # avoid overlap
+    X_val_df   = X_df.loc[train_end:val_end].iloc[1:]
     X_test_df  = X_df.loc[val_end:].iloc[1:]
 
     X_train = X_train_df.values.reshape(-1, len(ASSETS), N_FEATURES)
@@ -110,7 +101,7 @@ def main():
     logger.info("\n[4/6] Building iTransformerEncoder...")
     encoder = iTransformerEncoder(
         n_assets  = len(ASSETS),
-        lookback  = LOOKBACK_T * N_FEATURES,  # flattened input per asset
+        lookback  = LOOKBACK_T * N_FEATURES,
         d_model   = D_MODEL,
         n_heads   = N_HEADS,
         n_layers  = N_LAYERS,
@@ -124,15 +115,14 @@ def main():
     logger.info("\n[5/6] Validating encoder with real data...")
     encoder.eval()
 
-    # Build a batch of windows from training data
     T_train = len(X_train_norm)
     windows = []
     for t in range(LOOKBACK_T, min(LOOKBACK_T + 32, T_train)):
-        window = X_train_norm[t - LOOKBACK_T: t]           # (lookback, n_assets, n_features)
-        window_flat = window.transpose(1, 0, 2).reshape(len(ASSETS), -1)  # (n_assets, lookback*n_feat)
+        window = X_train_norm[t - LOOKBACK_T: t]
+        window_flat = window.transpose(1, 0, 2).reshape(len(ASSETS), -1)
         windows.append(window_flat)
 
-    batch = torch.from_numpy(np.stack(windows, axis=0))    # (32, n_assets, lookback*n_feat)
+    batch = torch.from_numpy(np.stack(windows, axis=0))
     logger.info(f"  Batch shape: {batch.shape}")
 
     with torch.no_grad():
@@ -144,9 +134,7 @@ def main():
     logger.info(f"  NaN count:   {torch.isnan(embeddings).sum().item()}")
     logger.info(f"  Inf count:   {torch.isinf(embeddings).sum().item()}")
 
-    # Verify IQN input dimension
-    regime_posterior_dim = K
-    iqn_input_dim = D_MODEL + regime_posterior_dim
+    iqn_input_dim = D_MODEL + K
     logger.info(f"\n  IQN agent input dim: {D_MODEL} (encoder) + {K} (HMM) = {iqn_input_dim}")
 
     # ── Step 6: Attention visualization ───────────────────────────────────
@@ -154,7 +142,6 @@ def main():
     attn_weights = encoder.get_attention_weights(batch[:8])
 
     for layer_idx, weights in enumerate(attn_weights):
-        # Average across batch and heads: (n_assets, n_assets)
         avg_weights = weights.mean(dim=(0, 1)).numpy()
 
         fig, ax = plt.subplots(figsize=(6, 5))
@@ -178,32 +165,31 @@ def main():
         plt.close()
         logger.info(f"  Saved attention plot: {path}")
 
-    # ── Save encoder and normalizer ────────────────────────────────────────
+    # ── Save outputs ───────────────────────────────────────────────────────
     torch.save(encoder.state_dict(), MODEL_DIR / "encoder_stage2.pt")
     with open(MODEL_DIR / "normalizer_stage2.pkl", "wb") as f:
         pickle.dump(normalizer, f)
     logger.info(f"\n  Encoder saved to {MODEL_DIR}/encoder_stage2.pt")
     logger.info(f"  Normalizer saved to {MODEL_DIR}/normalizer_stage2.pkl")
 
-    # Save normalized features for Stage 3
     np.save(OUTPUT_DIR / "enc_features_train.npy", X_train_norm)
     np.save(OUTPUT_DIR / "enc_features_val.npy",   X_val_norm)
     np.save(OUTPUT_DIR / "enc_features_test.npy",  X_test_norm)
 
-    # ── Stage 2 Success Criteria ───────────────────────────────────────────
+    # ── Results ────────────────────────────────────────────────────────────
     logger.info("\n" + "=" * 60)
-    logger.info("STAGE 2 COMPLETE — Success Criteria Check")
+    logger.info("Results")
     logger.info("=" * 60)
 
     checks = {
-        "Output shape correct (32, 64)":        embeddings.shape == (32, D_MODEL),
-        "No NaN in output":                      not torch.isnan(embeddings).any().item(),
-        "No Inf in output":                      not torch.isinf(embeddings).any().item(),
-        "Gradients flow (differentiable)":       _check_gradients(encoder, batch),
-        "Encoder saved":                         (MODEL_DIR / "encoder_stage2.pt").exists(),
-        "Normalizer saved":                      (MODEL_DIR / "normalizer_stage2.pkl").exists(),
-        "Attention plots generated":             (FIGURES_DIR / "attention_layer1.png").exists(),
-        "Features saved for Stage 3":            (OUTPUT_DIR / "enc_features_train.npy").exists(),
+        "Output shape correct (32, 64)":   embeddings.shape == (32, D_MODEL),
+        "No NaN in output":                not torch.isnan(embeddings).any().item(),
+        "No Inf in output":                not torch.isinf(embeddings).any().item(),
+        "Gradients flow":                  _check_gradients(encoder, batch),
+        "Encoder saved":                   (MODEL_DIR / "encoder_stage2.pt").exists(),
+        "Normalizer saved":                (MODEL_DIR / "normalizer_stage2.pkl").exists(),
+        "Attention plots generated":       (FIGURES_DIR / "attention_layer1.png").exists(),
+        "Features saved":                  (OUTPUT_DIR / "enc_features_train.npy").exists(),
     }
 
     all_passed = True
@@ -214,16 +200,15 @@ def main():
             all_passed = False
 
     if all_passed:
-        logger.info("\n  ALL CHECKS PASSED. Ready for Stage 3 (IQN Agent).")
+        logger.info("\n  All checks passed.")
         logger.info(f"\n  IQN agent state input: encoder({D_MODEL}) + HMM({K}) = {D_MODEL + K} dims")
     else:
-        logger.warning("\n  Some checks failed — review logs before proceeding.")
+        logger.warning("\n  Some checks failed — review logs.")
 
     return encoder, normalizer
 
 
 def _check_gradients(encoder, batch):
-    """Quick gradient check — returns True if gradients flow."""
     try:
         x = batch.clone().requires_grad_(True)
         out = encoder(x)
