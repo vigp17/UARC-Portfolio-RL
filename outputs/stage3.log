@@ -1,0 +1,771 @@
+17:42:21 | INFO | Agents : ['no_regime_iqn', 'hmm_hard_dqn', 'hmm_posterior_dqn', 'uarc']
+17:42:21 | INFO | Seeds  : [42, 123, 456, 789, 1337]
+17:42:21 | INFO | ============================================================
+17:42:21 | INFO | STAGE 3: Multi-Agent Training (4 agents x 5 seeds)
+17:42:21 | INFO | ============================================================
+17:42:21 | INFO | 
+[1/4] Loading Stage 1 + Stage 2 outputs...
+17:42:22 | INFO |   Train: enc (3280, 5, 6) | post (3240, 3)
+17:42:22 | INFO |   Val:   enc (756, 5, 6)   | post (756, 3)
+17:42:22 | INFO |   Loading prices from data/raw/prices.csv
+17:42:22 | INFO |   Replit train/val: train=2592 val=648 days
+17:42:22 | INFO |   Prices train: (2592, 5)  val: (648, 5)
+17:42:22 | INFO | 
+[2/4] Training all agents...
+17:42:22 | INFO | 
+[1/20] Training: no_regime_iqn | seed=42
+17:42:22 | INFO | [no_regime_iqn | seed=42] Encoder JOINT (lr=1e-05) | device=mps
+17:42:23 | INFO |   Val embeddings: (648, 64)
+17:42:24 | INFO | 
+============================================================
+  Agent : no_regime_iqn
+  Type  : IQN
+  Regime: uniform
+  Seed  : 42
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+17:42:25 | INFO |   Ep    0/1000 | Ret: -0.0917 | Sharpe: -0.457 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+17:47:58 | INFO |   Ep  100/1000 | Ret: +0.0006 | Sharpe: 0.009 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+17:48:05 | INFO |   [VAL] Sharpe: 1.257 | Ret: +0.3641 | DD: -0.0613
+17:48:05 | INFO |   * New best: 1.257
+17:53:54 | INFO |   Ep  200/1000 | Ret: +0.1933 | Sharpe: 2.192 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+17:54:03 | INFO |   [VAL] Sharpe: 1.231 | Ret: +0.3669 | DD: -0.0613
+17:59:53 | INFO |   Ep  300/1000 | Ret: +0.0590 | Sharpe: 0.653 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+18:00:00 | INFO |   [VAL] Sharpe: 1.345 | Ret: +0.4119 | DD: -0.0613
+18:00:00 | INFO |   * New best: 1.345
+18:05:50 | INFO |   Ep  400/1000 | Ret: +0.1239 | Sharpe: 1.600 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+18:05:58 | INFO |   [VAL] Sharpe: 1.168 | Ret: +0.3233 | DD: -0.0620
+18:11:47 | INFO |   Ep  500/1000 | Ret: +0.0375 | Sharpe: 0.417 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+18:11:55 | INFO |   [VAL] Sharpe: 1.401 | Ret: +0.4068 | DD: -0.0612
+18:11:55 | INFO |   * New best: 1.401
+18:17:45 | INFO |   Ep  600/1000 | Ret: +0.0872 | Sharpe: 1.132 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+18:17:52 | INFO |   [VAL] Sharpe: 1.204 | Ret: +0.3843 | DD: -0.0895
+18:23:45 | INFO |   Ep  700/1000 | Ret: +0.1095 | Sharpe: 1.825 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+18:23:53 | INFO |   [VAL] Sharpe: 1.271 | Ret: +0.3733 | DD: -0.0612
+18:29:44 | INFO |   Ep  800/1000 | Ret: +0.1010 | Sharpe: 1.146 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+18:29:51 | INFO |   [VAL] Sharpe: 1.729 | Ret: +0.5292 | DD: -0.0612
+18:29:51 | INFO |   * New best: 1.729
+18:35:40 | INFO |   Ep  900/1000 | Ret: +0.0896 | Sharpe: 1.710 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+18:35:48 | INFO |   [VAL] Sharpe: 1.085 | Ret: +0.3237 | DD: -0.0612
+18:41:34 | INFO |   Done. Best val Sharpe: 1.729
+18:41:34 | INFO |   -> best val Sharpe: 1.7291
+18:41:34 | INFO | 
+[2/20] Training: no_regime_iqn | seed=123
+18:41:34 | INFO | [no_regime_iqn | seed=123] Encoder JOINT (lr=1e-05) | device=mps
+18:41:36 | INFO |   Val embeddings: (648, 64)
+18:41:36 | INFO | 
+============================================================
+  Agent : no_regime_iqn
+  Type  : IQN
+  Regime: uniform
+  Seed  : 123
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+18:41:37 | INFO |   Ep    0/1000 | Ret: +0.1803 | Sharpe: 2.522 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+18:47:09 | INFO |   Ep  100/1000 | Ret: +0.1058 | Sharpe: 1.695 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+18:47:16 | INFO |   [VAL] Sharpe: 1.397 | Ret: +0.4121 | DD: -0.0612
+18:47:16 | INFO |   * New best: 1.397
+18:53:07 | INFO |   Ep  200/1000 | Ret: +0.1232 | Sharpe: 1.893 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+18:53:14 | INFO |   [VAL] Sharpe: 1.277 | Ret: +0.4098 | DD: -0.0612
+18:59:05 | INFO |   Ep  300/1000 | Ret: +0.1320 | Sharpe: 1.514 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+18:59:14 | INFO |   [VAL] Sharpe: 1.285 | Ret: +0.3926 | DD: -0.0636
+19:05:03 | INFO |   Ep  400/1000 | Ret: +0.1479 | Sharpe: 1.753 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+19:05:11 | INFO |   [VAL] Sharpe: 1.134 | Ret: +0.3222 | DD: -0.0612
+19:11:01 | INFO |   Ep  500/1000 | Ret: +0.0890 | Sharpe: 1.245 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+19:11:10 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3188 | DD: -0.1046
+19:16:59 | INFO |   Ep  600/1000 | Ret: -0.1782 | Sharpe: -1.017 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+19:17:08 | INFO |   [VAL] Sharpe: 1.481 | Ret: +0.4623 | DD: -0.0612
+19:17:08 | INFO |   * New best: 1.481
+19:22:58 | INFO |   Ep  700/1000 | Ret: +0.0946 | Sharpe: 1.524 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+19:23:06 | INFO |   [VAL] Sharpe: 1.266 | Ret: +0.3805 | DD: -0.0612
+19:28:56 | INFO |   Ep  800/1000 | Ret: +0.1582 | Sharpe: 1.892 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+19:29:04 | INFO |   [VAL] Sharpe: 1.333 | Ret: +0.3794 | DD: -0.0612
+19:34:54 | INFO |   Ep  900/1000 | Ret: +0.1017 | Sharpe: 1.191 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+19:35:03 | INFO |   [VAL] Sharpe: 1.051 | Ret: +0.3330 | DD: -0.0612
+19:40:49 | INFO |   Done. Best val Sharpe: 1.481
+19:40:49 | INFO |   -> best val Sharpe: 1.4814
+19:40:49 | INFO | 
+[3/20] Training: no_regime_iqn | seed=456
+19:40:49 | INFO | [no_regime_iqn | seed=456] Encoder JOINT (lr=1e-05) | device=mps
+19:40:51 | INFO |   Val embeddings: (648, 64)
+19:40:51 | INFO | 
+============================================================
+  Agent : no_regime_iqn
+  Type  : IQN
+  Regime: uniform
+  Seed  : 456
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+19:40:52 | INFO |   Ep    0/1000 | Ret: +0.0429 | Sharpe: 0.528 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+19:46:23 | INFO |   Ep  100/1000 | Ret: +0.2178 | Sharpe: 2.321 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+19:46:30 | INFO |   [VAL] Sharpe: 1.138 | Ret: +0.3403 | DD: -0.0676
+19:46:31 | INFO |   * New best: 1.138
+19:52:20 | INFO |   Ep  200/1000 | Ret: +0.0558 | Sharpe: 0.652 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+19:52:28 | INFO |   [VAL] Sharpe: 1.091 | Ret: +0.3207 | DD: -0.0605
+19:58:18 | INFO |   Ep  300/1000 | Ret: +0.0996 | Sharpe: 1.179 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+19:58:26 | INFO |   [VAL] Sharpe: 1.209 | Ret: +0.3599 | DD: -0.0608
+19:58:26 | INFO |   * New best: 1.209
+20:04:15 | INFO |   Ep  400/1000 | Ret: +0.0971 | Sharpe: 1.272 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+20:04:22 | INFO |   [VAL] Sharpe: 1.263 | Ret: +0.3603 | DD: -0.0629
+20:04:22 | INFO |   * New best: 1.263
+20:10:11 | INFO |   Ep  500/1000 | Ret: -0.2044 | Sharpe: -1.490 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+20:10:19 | INFO |   [VAL] Sharpe: 1.383 | Ret: +0.4245 | DD: -0.0610
+20:10:19 | INFO |   * New best: 1.383
+20:16:09 | INFO |   Ep  600/1000 | Ret: +0.0587 | Sharpe: 0.795 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+20:16:17 | INFO |   [VAL] Sharpe: 1.254 | Ret: +0.3530 | DD: -0.0611
+20:22:06 | INFO |   Ep  700/1000 | Ret: +0.1050 | Sharpe: 1.192 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+20:22:15 | INFO |   [VAL] Sharpe: 1.205 | Ret: +0.3581 | DD: -0.0611
+20:28:04 | INFO |   Ep  800/1000 | Ret: +0.0817 | Sharpe: 1.094 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+20:28:13 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3623 | DD: -0.0955
+20:34:03 | INFO |   Ep  900/1000 | Ret: +0.1308 | Sharpe: 1.609 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+20:34:11 | INFO |   [VAL] Sharpe: 1.060 | Ret: +0.3169 | DD: -0.0611
+20:39:57 | INFO |   Done. Best val Sharpe: 1.383
+20:39:57 | INFO |   -> best val Sharpe: 1.3831
+20:39:57 | INFO | 
+[4/20] Training: no_regime_iqn | seed=789
+20:39:57 | INFO | [no_regime_iqn | seed=789] Encoder JOINT (lr=1e-05) | device=mps
+20:39:59 | INFO |   Val embeddings: (648, 64)
+20:39:59 | INFO | 
+============================================================
+  Agent : no_regime_iqn
+  Type  : IQN
+  Regime: uniform
+  Seed  : 789
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+20:40:00 | INFO |   Ep    0/1000 | Ret: +0.1121 | Sharpe: 1.251 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+20:45:32 | INFO |   Ep  100/1000 | Ret: +0.1212 | Sharpe: 1.935 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+20:45:40 | INFO |   [VAL] Sharpe: 1.322 | Ret: +0.3640 | DD: -0.0971
+20:45:40 | INFO |   * New best: 1.322
+20:51:28 | INFO |   Ep  200/1000 | Ret: +0.1688 | Sharpe: 1.504 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+20:51:36 | INFO |   [VAL] Sharpe: 1.282 | Ret: +0.3963 | DD: -0.0845
+20:57:24 | INFO |   Ep  300/1000 | Ret: +0.1039 | Sharpe: 1.552 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+20:57:33 | INFO |   [VAL] Sharpe: 1.449 | Ret: +0.4166 | DD: -0.0623
+20:57:33 | INFO |   * New best: 1.449
+21:03:22 | INFO |   Ep  400/1000 | Ret: +0.0650 | Sharpe: 0.712 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+21:03:30 | INFO |   [VAL] Sharpe: 1.329 | Ret: +0.3747 | DD: -0.0619
+21:09:18 | INFO |   Ep  500/1000 | Ret: +0.0648 | Sharpe: 1.137 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+21:09:26 | INFO |   [VAL] Sharpe: 1.297 | Ret: +0.3883 | DD: -0.0629
+21:15:15 | INFO |   Ep  600/1000 | Ret: +0.1059 | Sharpe: 1.618 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+21:15:22 | INFO |   [VAL] Sharpe: 1.119 | Ret: +0.3138 | DD: -0.0614
+21:21:11 | INFO |   Ep  700/1000 | Ret: +0.1449 | Sharpe: 2.131 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+21:21:19 | INFO |   [VAL] Sharpe: 1.230 | Ret: +0.3814 | DD: -0.0613
+21:27:08 | INFO |   Ep  800/1000 | Ret: +0.1662 | Sharpe: 1.590 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+21:27:16 | INFO |   [VAL] Sharpe: 1.512 | Ret: +0.4231 | DD: -0.0613
+21:27:17 | INFO |   * New best: 1.512
+21:33:05 | INFO |   Ep  900/1000 | Ret: +0.1397 | Sharpe: 2.028 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+21:33:13 | INFO |   [VAL] Sharpe: 1.424 | Ret: +0.4484 | DD: -0.0612
+21:38:59 | INFO |   Done. Best val Sharpe: 1.512
+21:38:59 | INFO |   -> best val Sharpe: 1.5123
+21:38:59 | INFO | 
+[5/20] Training: no_regime_iqn | seed=1337
+21:38:59 | INFO | [no_regime_iqn | seed=1337] Encoder JOINT (lr=1e-05) | device=mps
+21:39:01 | INFO |   Val embeddings: (648, 64)
+21:39:01 | INFO | 
+============================================================
+  Agent : no_regime_iqn
+  Type  : IQN
+  Regime: uniform
+  Seed  : 1337
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+21:39:02 | INFO |   Ep    0/1000 | Ret: +0.0698 | Sharpe: 0.751 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+21:44:35 | INFO |   Ep  100/1000 | Ret: +0.0250 | Sharpe: 0.220 | Loss: 0.00001 | Buf: 25,452 | eps: 0.270
+21:44:43 | INFO |   [VAL] Sharpe: 1.301 | Ret: +0.4031 | DD: -0.0601
+21:44:43 | INFO |   * New best: 1.301
+21:50:31 | INFO |   Ep  200/1000 | Ret: +0.0405 | Sharpe: 0.398 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+21:50:39 | INFO |   [VAL] Sharpe: 1.171 | Ret: +0.3555 | DD: -0.0742
+21:56:27 | INFO |   Ep  300/1000 | Ret: +0.0262 | Sharpe: 0.360 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+21:56:36 | INFO |   [VAL] Sharpe: 1.248 | Ret: +0.3681 | DD: -0.0740
+22:02:24 | INFO |   Ep  400/1000 | Ret: -0.1377 | Sharpe: -0.737 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+22:02:32 | INFO |   [VAL] Sharpe: 1.275 | Ret: +0.3816 | DD: -0.0609
+22:08:23 | INFO |   Ep  500/1000 | Ret: +0.0295 | Sharpe: 0.365 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+22:08:31 | INFO |   [VAL] Sharpe: 1.305 | Ret: +0.3818 | DD: -0.0610
+22:08:31 | INFO |   * New best: 1.305
+22:14:21 | INFO |   Ep  600/1000 | Ret: +0.1156 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+22:14:29 | INFO |   [VAL] Sharpe: 1.038 | Ret: +0.2870 | DD: -0.0615
+22:20:16 | INFO |   Ep  700/1000 | Ret: +0.1279 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+22:20:24 | INFO |   [VAL] Sharpe: 1.452 | Ret: +0.4014 | DD: -0.0611
+22:20:24 | INFO |   * New best: 1.452
+22:26:13 | INFO |   Ep  800/1000 | Ret: +0.1263 | Sharpe: 2.286 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+22:26:19 | INFO |   [VAL] Sharpe: 1.183 | Ret: +0.3393 | DD: -0.0611
+22:32:08 | INFO |   Ep  900/1000 | Ret: +0.0158 | Sharpe: 0.224 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+22:32:16 | INFO |   [VAL] Sharpe: 1.264 | Ret: +0.3857 | DD: -0.0719
+22:38:04 | INFO |   Done. Best val Sharpe: 1.452
+22:38:04 | INFO |   -> best val Sharpe: 1.4520
+22:38:04 | INFO | 
+  [no_regime_iqn] Val Sharpe across 5 seeds: 1.512 +/- 0.117
+22:38:04 | INFO | 
+[6/20] Training: hmm_hard_dqn | seed=42
+22:38:04 | INFO | [hmm_hard_dqn | seed=42] Encoder JOINT (lr=1e-05) | device=mps
+22:38:06 | INFO |   Val embeddings: (648, 64)
+22:38:06 | INFO | 
+============================================================
+  Agent : hmm_hard_dqn
+  Type  : DQN (n_tau=1)
+  Regime: hard
+  Seed  : 42
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+22:38:07 | INFO |   Ep    0/1000 | Ret: -0.1044 | Sharpe: -0.518 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+22:42:52 | INFO |   Ep  100/1000 | Ret: +0.0009 | Sharpe: 0.013 | Loss: 0.00001 | Buf: 25,452 | eps: 0.270
+22:42:59 | INFO |   [VAL] Sharpe: 1.260 | Ret: +0.3659 | DD: -0.0613
+22:42:59 | INFO |   * New best: 1.260
+22:47:56 | INFO |   Ep  200/1000 | Ret: +0.1934 | Sharpe: 2.192 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+22:48:02 | INFO |   [VAL] Sharpe: 1.231 | Ret: +0.3677 | DD: -0.0612
+22:52:58 | INFO |   Ep  300/1000 | Ret: +0.0591 | Sharpe: 0.653 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+22:53:04 | INFO |   [VAL] Sharpe: 1.345 | Ret: +0.4123 | DD: -0.0612
+22:53:04 | INFO |   * New best: 1.345
+22:58:11 | INFO |   Ep  400/1000 | Ret: +0.1240 | Sharpe: 1.600 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+22:58:18 | INFO |   [VAL] Sharpe: 1.169 | Ret: +0.3239 | DD: -0.0619
+23:03:32 | INFO |   Ep  500/1000 | Ret: +0.0376 | Sharpe: 0.418 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+23:03:39 | INFO |   [VAL] Sharpe: 1.401 | Ret: +0.4071 | DD: -0.0612
+23:03:39 | INFO |   * New best: 1.401
+23:08:54 | INFO |   Ep  600/1000 | Ret: +0.0872 | Sharpe: 1.131 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+23:09:01 | INFO |   [VAL] Sharpe: 1.204 | Ret: +0.3844 | DD: -0.0895
+23:14:15 | INFO |   Ep  700/1000 | Ret: +0.1095 | Sharpe: 1.825 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+23:14:22 | INFO |   [VAL] Sharpe: 1.271 | Ret: +0.3734 | DD: -0.0612
+23:19:36 | INFO |   Ep  800/1000 | Ret: +0.1010 | Sharpe: 1.145 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+23:19:43 | INFO |   [VAL] Sharpe: 1.729 | Ret: +0.5292 | DD: -0.0612
+23:19:43 | INFO |   * New best: 1.729
+23:24:58 | INFO |   Ep  900/1000 | Ret: +0.0896 | Sharpe: 1.710 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+23:25:06 | INFO |   [VAL] Sharpe: 1.085 | Ret: +0.3238 | DD: -0.0612
+23:30:18 | INFO |   Done. Best val Sharpe: 1.729
+23:30:18 | INFO |   -> best val Sharpe: 1.7290
+23:30:18 | INFO | 
+[7/20] Training: hmm_hard_dqn | seed=123
+23:30:18 | INFO | [hmm_hard_dqn | seed=123] Encoder JOINT (lr=1e-05) | device=mps
+23:30:20 | INFO |   Val embeddings: (648, 64)
+23:30:20 | INFO | 
+============================================================
+  Agent : hmm_hard_dqn
+  Type  : DQN (n_tau=1)
+  Regime: hard
+  Seed  : 123
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+23:30:21 | INFO |   Ep    0/1000 | Ret: +0.1848 | Sharpe: 2.607 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+23:35:21 | INFO |   Ep  100/1000 | Ret: +0.1061 | Sharpe: 1.701 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+23:35:28 | INFO |   [VAL] Sharpe: 1.398 | Ret: +0.4121 | DD: -0.0611
+23:35:28 | INFO |   * New best: 1.398
+23:40:42 | INFO |   Ep  200/1000 | Ret: +0.1234 | Sharpe: 1.897 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+23:40:49 | INFO |   [VAL] Sharpe: 1.277 | Ret: +0.4097 | DD: -0.0611
+23:46:03 | INFO |   Ep  300/1000 | Ret: +0.1321 | Sharpe: 1.516 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+23:46:10 | INFO |   [VAL] Sharpe: 1.285 | Ret: +0.3925 | DD: -0.0636
+23:51:15 | INFO |   Ep  400/1000 | Ret: +0.1480 | Sharpe: 1.754 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+23:51:22 | INFO |   [VAL] Sharpe: 1.134 | Ret: +0.3222 | DD: -0.0612
+23:56:38 | INFO |   Ep  500/1000 | Ret: +0.0891 | Sharpe: 1.246 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+23:56:45 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3188 | DD: -0.1046
+00:02:02 | INFO |   Ep  600/1000 | Ret: -0.1782 | Sharpe: -1.017 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+00:02:09 | INFO |   [VAL] Sharpe: 1.481 | Ret: +0.4623 | DD: -0.0612
+00:02:09 | INFO |   * New best: 1.481
+00:07:25 | INFO |   Ep  700/1000 | Ret: +0.0946 | Sharpe: 1.524 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+00:07:32 | INFO |   [VAL] Sharpe: 1.266 | Ret: +0.3805 | DD: -0.0612
+00:12:50 | INFO |   Ep  800/1000 | Ret: +0.1582 | Sharpe: 1.892 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+00:12:57 | INFO |   [VAL] Sharpe: 1.333 | Ret: +0.3794 | DD: -0.0612
+00:18:08 | INFO |   Ep  900/1000 | Ret: +0.1017 | Sharpe: 1.191 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+00:18:15 | INFO |   [VAL] Sharpe: 1.051 | Ret: +0.3330 | DD: -0.0612
+00:23:29 | INFO |   Done. Best val Sharpe: 1.481
+00:23:29 | INFO |   -> best val Sharpe: 1.4814
+00:23:29 | INFO | 
+[8/20] Training: hmm_hard_dqn | seed=456
+00:23:29 | INFO | [hmm_hard_dqn | seed=456] Encoder JOINT (lr=1e-05) | device=mps
+00:23:30 | INFO |   Val embeddings: (648, 64)
+00:23:30 | INFO | 
+============================================================
+  Agent : hmm_hard_dqn
+  Type  : DQN (n_tau=1)
+  Regime: hard
+  Seed  : 456
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+00:23:31 | INFO |   Ep    0/1000 | Ret: +0.0445 | Sharpe: 0.552 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+00:28:32 | INFO |   Ep  100/1000 | Ret: +0.2179 | Sharpe: 2.323 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+00:28:39 | INFO |   [VAL] Sharpe: 1.138 | Ret: +0.3404 | DD: -0.0675
+00:28:39 | INFO |   * New best: 1.138
+00:33:55 | INFO |   Ep  200/1000 | Ret: +0.0557 | Sharpe: 0.650 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+00:34:02 | INFO |   [VAL] Sharpe: 1.090 | Ret: +0.3206 | DD: -0.0606
+00:39:19 | INFO |   Ep  300/1000 | Ret: +0.0995 | Sharpe: 1.177 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+00:39:26 | INFO |   [VAL] Sharpe: 1.209 | Ret: +0.3598 | DD: -0.0608
+00:39:26 | INFO |   * New best: 1.209
+00:44:41 | INFO |   Ep  400/1000 | Ret: +0.0971 | Sharpe: 1.272 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+00:44:48 | INFO |   [VAL] Sharpe: 1.263 | Ret: +0.3602 | DD: -0.0629
+00:44:48 | INFO |   * New best: 1.263
+00:49:58 | INFO |   Ep  500/1000 | Ret: -0.2043 | Sharpe: -1.489 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+00:50:05 | INFO |   [VAL] Sharpe: 1.383 | Ret: +0.4246 | DD: -0.0610
+00:50:05 | INFO |   * New best: 1.383
+00:55:21 | INFO |   Ep  600/1000 | Ret: +0.0586 | Sharpe: 0.795 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+00:55:28 | INFO |   [VAL] Sharpe: 1.253 | Ret: +0.3530 | DD: -0.0611
+01:00:45 | INFO |   Ep  700/1000 | Ret: +0.1051 | Sharpe: 1.193 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+01:00:52 | INFO |   [VAL] Sharpe: 1.205 | Ret: +0.3581 | DD: -0.0611
+01:06:06 | INFO |   Ep  800/1000 | Ret: +0.0817 | Sharpe: 1.094 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+01:06:12 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3623 | DD: -0.0955
+01:11:30 | INFO |   Ep  900/1000 | Ret: +0.1308 | Sharpe: 1.609 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+01:11:37 | INFO |   [VAL] Sharpe: 1.060 | Ret: +0.3169 | DD: -0.0611
+01:16:49 | INFO |   Done. Best val Sharpe: 1.383
+01:16:49 | INFO |   -> best val Sharpe: 1.3832
+01:16:49 | INFO | 
+[9/20] Training: hmm_hard_dqn | seed=789
+01:16:49 | INFO | [hmm_hard_dqn | seed=789] Encoder JOINT (lr=1e-05) | device=mps
+01:16:51 | INFO |   Val embeddings: (648, 64)
+01:16:51 | INFO | 
+============================================================
+  Agent : hmm_hard_dqn
+  Type  : DQN (n_tau=1)
+  Regime: hard
+  Seed  : 789
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+01:16:52 | INFO |   Ep    0/1000 | Ret: +0.1176 | Sharpe: 1.323 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+01:21:46 | INFO |   Ep  100/1000 | Ret: +0.1213 | Sharpe: 1.934 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+01:21:53 | INFO |   [VAL] Sharpe: 1.330 | Ret: +0.3667 | DD: -0.0966
+01:21:53 | INFO |   * New best: 1.330
+01:27:07 | INFO |   Ep  200/1000 | Ret: +0.1688 | Sharpe: 1.503 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+01:27:14 | INFO |   [VAL] Sharpe: 1.281 | Ret: +0.3967 | DD: -0.0846
+01:32:30 | INFO |   Ep  300/1000 | Ret: +0.1039 | Sharpe: 1.551 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+01:32:37 | INFO |   [VAL] Sharpe: 1.450 | Ret: +0.4171 | DD: -0.0622
+01:32:37 | INFO |   * New best: 1.450
+01:37:54 | INFO |   Ep  400/1000 | Ret: +0.0648 | Sharpe: 0.710 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+01:38:01 | INFO |   [VAL] Sharpe: 1.330 | Ret: +0.3751 | DD: -0.0618
+01:43:18 | INFO |   Ep  500/1000 | Ret: +0.0649 | Sharpe: 1.138 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+01:43:27 | INFO |   [VAL] Sharpe: 1.297 | Ret: +0.3884 | DD: -0.0629
+01:48:36 | INFO |   Ep  600/1000 | Ret: +0.1059 | Sharpe: 1.618 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+01:48:43 | INFO |   [VAL] Sharpe: 1.119 | Ret: +0.3140 | DD: -0.0614
+01:53:58 | INFO |   Ep  700/1000 | Ret: +0.1449 | Sharpe: 2.131 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+01:54:05 | INFO |   [VAL] Sharpe: 1.230 | Ret: +0.3814 | DD: -0.0613
+01:59:23 | INFO |   Ep  800/1000 | Ret: +0.1662 | Sharpe: 1.590 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+01:59:30 | INFO |   [VAL] Sharpe: 1.512 | Ret: +0.4231 | DD: -0.0613
+01:59:30 | INFO |   * New best: 1.512
+02:04:44 | INFO |   Ep  900/1000 | Ret: +0.1397 | Sharpe: 2.028 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+02:04:51 | INFO |   [VAL] Sharpe: 1.424 | Ret: +0.4484 | DD: -0.0612
+02:10:04 | INFO |   Done. Best val Sharpe: 1.512
+02:10:04 | INFO |   -> best val Sharpe: 1.5124
+02:10:04 | INFO | 
+[10/20] Training: hmm_hard_dqn | seed=1337
+02:10:04 | INFO | [hmm_hard_dqn | seed=1337] Encoder JOINT (lr=1e-05) | device=mps
+02:10:06 | INFO |   Val embeddings: (648, 64)
+02:10:06 | INFO | 
+============================================================
+  Agent : hmm_hard_dqn
+  Type  : DQN (n_tau=1)
+  Regime: hard
+  Seed  : 1337
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+02:10:07 | INFO |   Ep    0/1000 | Ret: +0.0693 | Sharpe: 0.752 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+02:15:06 | INFO |   Ep  100/1000 | Ret: +0.0252 | Sharpe: 0.222 | Loss: 0.00001 | Buf: 25,452 | eps: 0.270
+02:15:13 | INFO |   [VAL] Sharpe: 1.302 | Ret: +0.4024 | DD: -0.0602
+02:15:13 | INFO |   * New best: 1.302
+02:20:28 | INFO |   Ep  200/1000 | Ret: +0.0412 | Sharpe: 0.405 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+02:20:35 | INFO |   [VAL] Sharpe: 1.171 | Ret: +0.3552 | DD: -0.0743
+02:25:50 | INFO |   Ep  300/1000 | Ret: +0.0259 | Sharpe: 0.356 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+02:25:56 | INFO |   [VAL] Sharpe: 1.248 | Ret: +0.3679 | DD: -0.0740
+02:31:12 | INFO |   Ep  400/1000 | Ret: -0.1378 | Sharpe: -0.738 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+02:31:19 | INFO |   [VAL] Sharpe: 1.275 | Ret: +0.3815 | DD: -0.0609
+02:36:35 | INFO |   Ep  500/1000 | Ret: +0.0293 | Sharpe: 0.364 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+02:36:42 | INFO |   [VAL] Sharpe: 1.305 | Ret: +0.3817 | DD: -0.0610
+02:36:42 | INFO |   * New best: 1.305
+02:41:51 | INFO |   Ep  600/1000 | Ret: +0.1157 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+02:41:59 | INFO |   [VAL] Sharpe: 1.037 | Ret: +0.2869 | DD: -0.0615
+02:47:07 | INFO |   Ep  700/1000 | Ret: +0.1279 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+02:47:14 | INFO |   [VAL] Sharpe: 1.452 | Ret: +0.4013 | DD: -0.0611
+02:47:14 | INFO |   * New best: 1.452
+02:52:24 | INFO |   Ep  800/1000 | Ret: +0.1263 | Sharpe: 2.286 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+02:52:31 | INFO |   [VAL] Sharpe: 1.183 | Ret: +0.3393 | DD: -0.0611
+02:57:43 | INFO |   Ep  900/1000 | Ret: +0.0158 | Sharpe: 0.224 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+02:57:50 | INFO |   [VAL] Sharpe: 1.264 | Ret: +0.3857 | DD: -0.0719
+03:03:04 | INFO |   Done. Best val Sharpe: 1.452
+03:03:04 | INFO |   -> best val Sharpe: 1.4517
+03:03:04 | INFO | 
+  [hmm_hard_dqn] Val Sharpe across 5 seeds: 1.512 +/- 0.117
+03:03:04 | INFO | 
+[11/20] Training: hmm_posterior_dqn | seed=42
+03:03:04 | INFO | [hmm_posterior_dqn | seed=42] Encoder JOINT (lr=1e-05) | device=mps
+03:03:05 | INFO |   Val embeddings: (648, 64)
+03:03:06 | INFO | 
+============================================================
+  Agent : hmm_posterior_dqn
+  Type  : DQN (n_tau=1)
+  Regime: posterior
+  Seed  : 42
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+03:03:07 | INFO |   Ep    0/1000 | Ret: -0.1044 | Sharpe: -0.518 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+03:08:08 | INFO |   Ep  100/1000 | Ret: +0.0010 | Sharpe: 0.013 | Loss: 0.00001 | Buf: 25,452 | eps: 0.270
+03:08:15 | INFO |   [VAL] Sharpe: 1.260 | Ret: +0.3660 | DD: -0.0613
+03:08:15 | INFO |   * New best: 1.260
+03:13:31 | INFO |   Ep  200/1000 | Ret: +0.1934 | Sharpe: 2.192 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+03:13:38 | INFO |   [VAL] Sharpe: 1.231 | Ret: +0.3678 | DD: -0.0613
+03:18:54 | INFO |   Ep  300/1000 | Ret: +0.0591 | Sharpe: 0.653 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+03:19:01 | INFO |   [VAL] Sharpe: 1.345 | Ret: +0.4124 | DD: -0.0612
+03:19:01 | INFO |   * New best: 1.345
+03:24:17 | INFO |   Ep  400/1000 | Ret: +0.1240 | Sharpe: 1.600 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+03:24:24 | INFO |   [VAL] Sharpe: 1.169 | Ret: +0.3239 | DD: -0.0619
+03:29:41 | INFO |   Ep  500/1000 | Ret: +0.0376 | Sharpe: 0.418 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+03:29:48 | INFO |   [VAL] Sharpe: 1.401 | Ret: +0.4071 | DD: -0.0612
+03:29:48 | INFO |   * New best: 1.401
+03:35:05 | INFO |   Ep  600/1000 | Ret: +0.0872 | Sharpe: 1.131 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+03:35:12 | INFO |   [VAL] Sharpe: 1.204 | Ret: +0.3844 | DD: -0.0895
+03:40:30 | INFO |   Ep  700/1000 | Ret: +0.1095 | Sharpe: 1.825 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+03:40:37 | INFO |   [VAL] Sharpe: 1.271 | Ret: +0.3734 | DD: -0.0612
+03:45:52 | INFO |   Ep  800/1000 | Ret: +0.1010 | Sharpe: 1.145 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+03:45:59 | INFO |   [VAL] Sharpe: 1.729 | Ret: +0.5292 | DD: -0.0612
+03:45:59 | INFO |   * New best: 1.729
+03:51:09 | INFO |   Ep  900/1000 | Ret: +0.0896 | Sharpe: 1.710 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+03:51:16 | INFO |   [VAL] Sharpe: 1.085 | Ret: +0.3238 | DD: -0.0612
+03:56:30 | INFO |   Done. Best val Sharpe: 1.729
+03:56:30 | INFO |   -> best val Sharpe: 1.7290
+03:56:30 | INFO | 
+[12/20] Training: hmm_posterior_dqn | seed=123
+03:56:30 | INFO | [hmm_posterior_dqn | seed=123] Encoder JOINT (lr=1e-05) | device=mps
+03:56:32 | INFO |   Val embeddings: (648, 64)
+03:56:32 | INFO | 
+============================================================
+  Agent : hmm_posterior_dqn
+  Type  : DQN (n_tau=1)
+  Regime: posterior
+  Seed  : 123
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+03:56:33 | INFO |   Ep    0/1000 | Ret: +0.1848 | Sharpe: 2.607 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+04:01:31 | INFO |   Ep  100/1000 | Ret: +0.1061 | Sharpe: 1.701 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+04:01:38 | INFO |   [VAL] Sharpe: 1.398 | Ret: +0.4121 | DD: -0.0611
+04:01:38 | INFO |   * New best: 1.398
+04:06:52 | INFO |   Ep  200/1000 | Ret: +0.1234 | Sharpe: 1.896 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+04:06:59 | INFO |   [VAL] Sharpe: 1.277 | Ret: +0.4097 | DD: -0.0611
+04:12:16 | INFO |   Ep  300/1000 | Ret: +0.1321 | Sharpe: 1.516 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+04:12:23 | INFO |   [VAL] Sharpe: 1.285 | Ret: +0.3925 | DD: -0.0636
+04:17:39 | INFO |   Ep  400/1000 | Ret: +0.1480 | Sharpe: 1.754 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+04:17:45 | INFO |   [VAL] Sharpe: 1.134 | Ret: +0.3222 | DD: -0.0612
+04:22:56 | INFO |   Ep  500/1000 | Ret: +0.0891 | Sharpe: 1.246 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+04:23:03 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3188 | DD: -0.1046
+04:28:19 | INFO |   Ep  600/1000 | Ret: -0.1782 | Sharpe: -1.017 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+04:28:26 | INFO |   [VAL] Sharpe: 1.481 | Ret: +0.4623 | DD: -0.0612
+04:28:26 | INFO |   * New best: 1.481
+04:33:41 | INFO |   Ep  700/1000 | Ret: +0.0946 | Sharpe: 1.524 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+04:33:48 | INFO |   [VAL] Sharpe: 1.266 | Ret: +0.3805 | DD: -0.0612
+04:39:06 | INFO |   Ep  800/1000 | Ret: +0.1582 | Sharpe: 1.892 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+04:39:12 | INFO |   [VAL] Sharpe: 1.333 | Ret: +0.3794 | DD: -0.0612
+04:44:29 | INFO |   Ep  900/1000 | Ret: +0.1017 | Sharpe: 1.191 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+04:44:36 | INFO |   [VAL] Sharpe: 1.051 | Ret: +0.3330 | DD: -0.0612
+04:49:49 | INFO |   Done. Best val Sharpe: 1.481
+04:49:49 | INFO |   -> best val Sharpe: 1.4814
+04:49:49 | INFO | 
+[13/20] Training: hmm_posterior_dqn | seed=456
+04:49:49 | INFO | [hmm_posterior_dqn | seed=456] Encoder JOINT (lr=1e-05) | device=mps
+04:49:50 | INFO |   Val embeddings: (648, 64)
+04:49:50 | INFO | 
+============================================================
+  Agent : hmm_posterior_dqn
+  Type  : DQN (n_tau=1)
+  Regime: posterior
+  Seed  : 456
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+04:49:51 | INFO |   Ep    0/1000 | Ret: +0.0445 | Sharpe: 0.552 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+04:54:52 | INFO |   Ep  100/1000 | Ret: +0.2179 | Sharpe: 2.323 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+04:54:59 | INFO |   [VAL] Sharpe: 1.138 | Ret: +0.3404 | DD: -0.0674
+04:54:59 | INFO |   * New best: 1.138
+05:00:16 | INFO |   Ep  200/1000 | Ret: +0.0557 | Sharpe: 0.650 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+05:00:23 | INFO |   [VAL] Sharpe: 1.090 | Ret: +0.3206 | DD: -0.0606
+05:05:39 | INFO |   Ep  300/1000 | Ret: +0.0994 | Sharpe: 1.177 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+05:05:46 | INFO |   [VAL] Sharpe: 1.209 | Ret: +0.3598 | DD: -0.0608
+05:05:46 | INFO |   * New best: 1.209
+05:10:56 | INFO |   Ep  400/1000 | Ret: +0.0971 | Sharpe: 1.272 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+05:11:03 | INFO |   [VAL] Sharpe: 1.263 | Ret: +0.3602 | DD: -0.0629
+05:11:03 | INFO |   * New best: 1.263
+05:16:18 | INFO |   Ep  500/1000 | Ret: -0.2043 | Sharpe: -1.489 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+05:16:25 | INFO |   [VAL] Sharpe: 1.383 | Ret: +0.4246 | DD: -0.0610
+05:16:25 | INFO |   * New best: 1.383
+05:21:36 | INFO |   Ep  600/1000 | Ret: +0.0586 | Sharpe: 0.795 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+05:21:43 | INFO |   [VAL] Sharpe: 1.253 | Ret: +0.3530 | DD: -0.0611
+05:27:00 | INFO |   Ep  700/1000 | Ret: +0.1051 | Sharpe: 1.193 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+05:27:07 | INFO |   [VAL] Sharpe: 1.205 | Ret: +0.3581 | DD: -0.0611
+05:32:21 | INFO |   Ep  800/1000 | Ret: +0.0817 | Sharpe: 1.094 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+05:32:28 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3623 | DD: -0.0955
+05:37:45 | INFO |   Ep  900/1000 | Ret: +0.1308 | Sharpe: 1.609 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+05:37:52 | INFO |   [VAL] Sharpe: 1.060 | Ret: +0.3169 | DD: -0.0611
+05:43:06 | INFO |   Done. Best val Sharpe: 1.383
+05:43:06 | INFO |   -> best val Sharpe: 1.3833
+05:43:06 | INFO | 
+[14/20] Training: hmm_posterior_dqn | seed=789
+05:43:06 | INFO | [hmm_posterior_dqn | seed=789] Encoder JOINT (lr=1e-05) | device=mps
+05:43:08 | INFO |   Val embeddings: (648, 64)
+05:43:08 | INFO | 
+============================================================
+  Agent : hmm_posterior_dqn
+  Type  : DQN (n_tau=1)
+  Regime: posterior
+  Seed  : 789
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+05:43:09 | INFO |   Ep    0/1000 | Ret: +0.1176 | Sharpe: 1.323 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+05:48:03 | INFO |   Ep  100/1000 | Ret: +0.1213 | Sharpe: 1.934 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+05:48:09 | INFO |   [VAL] Sharpe: 1.330 | Ret: +0.3666 | DD: -0.0966
+05:48:10 | INFO |   * New best: 1.330
+05:53:25 | INFO |   Ep  200/1000 | Ret: +0.1688 | Sharpe: 1.502 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+05:53:32 | INFO |   [VAL] Sharpe: 1.281 | Ret: +0.3967 | DD: -0.0846
+05:58:49 | INFO |   Ep  300/1000 | Ret: +0.1039 | Sharpe: 1.552 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+05:58:56 | INFO |   [VAL] Sharpe: 1.450 | Ret: +0.4171 | DD: -0.0622
+05:58:56 | INFO |   * New best: 1.450
+06:04:08 | INFO |   Ep  400/1000 | Ret: +0.0649 | Sharpe: 0.710 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+06:04:15 | INFO |   [VAL] Sharpe: 1.330 | Ret: +0.3751 | DD: -0.0618
+06:09:31 | INFO |   Ep  500/1000 | Ret: +0.0649 | Sharpe: 1.138 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+06:09:38 | INFO |   [VAL] Sharpe: 1.297 | Ret: +0.3884 | DD: -0.0629
+06:14:54 | INFO |   Ep  600/1000 | Ret: +0.1059 | Sharpe: 1.618 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+06:15:01 | INFO |   [VAL] Sharpe: 1.119 | Ret: +0.3139 | DD: -0.0614
+06:20:17 | INFO |   Ep  700/1000 | Ret: +0.1449 | Sharpe: 2.131 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+06:20:24 | INFO |   [VAL] Sharpe: 1.230 | Ret: +0.3814 | DD: -0.0613
+06:25:40 | INFO |   Ep  800/1000 | Ret: +0.1662 | Sharpe: 1.590 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+06:25:47 | INFO |   [VAL] Sharpe: 1.512 | Ret: +0.4231 | DD: -0.0613
+06:25:47 | INFO |   * New best: 1.512
+06:30:58 | INFO |   Ep  900/1000 | Ret: +0.1397 | Sharpe: 2.028 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+06:31:05 | INFO |   [VAL] Sharpe: 1.424 | Ret: +0.4484 | DD: -0.0612
+06:36:18 | INFO |   Done. Best val Sharpe: 1.512
+06:36:18 | INFO |   -> best val Sharpe: 1.5124
+06:36:18 | INFO | 
+[15/20] Training: hmm_posterior_dqn | seed=1337
+06:36:18 | INFO | [hmm_posterior_dqn | seed=1337] Encoder JOINT (lr=1e-05) | device=mps
+06:36:20 | INFO |   Val embeddings: (648, 64)
+06:36:20 | INFO | 
+============================================================
+  Agent : hmm_posterior_dqn
+  Type  : DQN (n_tau=1)
+  Regime: posterior
+  Seed  : 1337
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+06:36:21 | INFO |   Ep    0/1000 | Ret: +0.0693 | Sharpe: 0.752 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+06:41:12 | INFO |   Ep  100/1000 | Ret: +0.0251 | Sharpe: 0.222 | Loss: 0.00001 | Buf: 25,452 | eps: 0.270
+06:41:19 | INFO |   [VAL] Sharpe: 1.302 | Ret: +0.4025 | DD: -0.0602
+06:41:19 | INFO |   * New best: 1.302
+06:46:26 | INFO |   Ep  200/1000 | Ret: +0.0412 | Sharpe: 0.405 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+06:46:33 | INFO |   [VAL] Sharpe: 1.171 | Ret: +0.3552 | DD: -0.0743
+06:51:49 | INFO |   Ep  300/1000 | Ret: +0.0259 | Sharpe: 0.356 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+06:51:56 | INFO |   [VAL] Sharpe: 1.248 | Ret: +0.3679 | DD: -0.0740
+06:57:11 | INFO |   Ep  400/1000 | Ret: -0.1378 | Sharpe: -0.738 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+06:57:18 | INFO |   [VAL] Sharpe: 1.275 | Ret: +0.3815 | DD: -0.0609
+07:02:35 | INFO |   Ep  500/1000 | Ret: +0.0293 | Sharpe: 0.364 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+07:02:42 | INFO |   [VAL] Sharpe: 1.305 | Ret: +0.3817 | DD: -0.0610
+07:02:42 | INFO |   * New best: 1.305
+07:07:59 | INFO |   Ep  600/1000 | Ret: +0.1157 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+07:08:06 | INFO |   [VAL] Sharpe: 1.037 | Ret: +0.2869 | DD: -0.0615
+07:13:24 | INFO |   Ep  700/1000 | Ret: +0.1279 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+07:13:31 | INFO |   [VAL] Sharpe: 1.452 | Ret: +0.4013 | DD: -0.0611
+07:13:31 | INFO |   * New best: 1.452
+07:18:40 | INFO |   Ep  800/1000 | Ret: +0.1263 | Sharpe: 2.286 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+07:18:47 | INFO |   [VAL] Sharpe: 1.183 | Ret: +0.3393 | DD: -0.0611
+07:24:04 | INFO |   Ep  900/1000 | Ret: +0.0158 | Sharpe: 0.224 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+07:24:11 | INFO |   [VAL] Sharpe: 1.264 | Ret: +0.3857 | DD: -0.0719
+07:29:22 | INFO |   Done. Best val Sharpe: 1.452
+07:29:22 | INFO |   -> best val Sharpe: 1.4518
+07:29:22 | INFO | 
+  [hmm_posterior_dqn] Val Sharpe across 5 seeds: 1.512 +/- 0.117
+07:29:22 | INFO | 
+[16/20] Training: uarc | seed=42
+07:29:22 | INFO | [uarc | seed=42] Encoder JOINT (lr=1e-05) | device=mps
+07:29:24 | INFO |   Val embeddings: (648, 64)
+07:29:24 | INFO | 
+============================================================
+  Agent : uarc
+  Type  : IQN
+  Regime: posterior
+  Seed  : 42
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+07:29:25 | INFO |   Ep    0/1000 | Ret: -0.0917 | Sharpe: -0.457 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+07:34:56 | INFO |   Ep  100/1000 | Ret: +0.0006 | Sharpe: 0.009 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+07:35:04 | INFO |   [VAL] Sharpe: 1.257 | Ret: +0.3641 | DD: -0.0613
+07:35:04 | INFO |   * New best: 1.257
+07:40:51 | INFO |   Ep  200/1000 | Ret: +0.1933 | Sharpe: 2.192 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+07:40:59 | INFO |   [VAL] Sharpe: 1.231 | Ret: +0.3669 | DD: -0.0613
+07:46:46 | INFO |   Ep  300/1000 | Ret: +0.0590 | Sharpe: 0.653 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+07:46:55 | INFO |   [VAL] Sharpe: 1.346 | Ret: +0.4119 | DD: -0.0613
+07:46:55 | INFO |   * New best: 1.346
+07:52:41 | INFO |   Ep  400/1000 | Ret: +0.1239 | Sharpe: 1.600 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+07:52:48 | INFO |   [VAL] Sharpe: 1.168 | Ret: +0.3233 | DD: -0.0620
+07:58:35 | INFO |   Ep  500/1000 | Ret: +0.0375 | Sharpe: 0.417 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+07:58:43 | INFO |   [VAL] Sharpe: 1.401 | Ret: +0.4068 | DD: -0.0612
+07:58:43 | INFO |   * New best: 1.401
+08:04:29 | INFO |   Ep  600/1000 | Ret: +0.0872 | Sharpe: 1.132 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+08:04:38 | INFO |   [VAL] Sharpe: 1.204 | Ret: +0.3843 | DD: -0.0895
+08:10:25 | INFO |   Ep  700/1000 | Ret: +0.1095 | Sharpe: 1.825 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+08:10:34 | INFO |   [VAL] Sharpe: 1.271 | Ret: +0.3733 | DD: -0.0612
+08:16:21 | INFO |   Ep  800/1000 | Ret: +0.1010 | Sharpe: 1.146 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+08:16:29 | INFO |   [VAL] Sharpe: 1.729 | Ret: +0.5291 | DD: -0.0612
+08:16:29 | INFO |   * New best: 1.729
+08:22:16 | INFO |   Ep  900/1000 | Ret: +0.0896 | Sharpe: 1.710 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+08:22:24 | INFO |   [VAL] Sharpe: 1.085 | Ret: +0.3237 | DD: -0.0612
+08:28:07 | INFO |   Done. Best val Sharpe: 1.729
+08:28:07 | INFO |   -> best val Sharpe: 1.7291
+08:28:07 | INFO | 
+[17/20] Training: uarc | seed=123
+08:28:07 | INFO | [uarc | seed=123] Encoder JOINT (lr=1e-05) | device=mps
+08:28:09 | INFO |   Val embeddings: (648, 64)
+08:28:09 | INFO | 
+============================================================
+  Agent : uarc
+  Type  : IQN
+  Regime: posterior
+  Seed  : 123
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+08:28:10 | INFO |   Ep    0/1000 | Ret: +0.1803 | Sharpe: 2.522 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+08:33:40 | INFO |   Ep  100/1000 | Ret: +0.1058 | Sharpe: 1.695 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+08:33:49 | INFO |   [VAL] Sharpe: 1.397 | Ret: +0.4120 | DD: -0.0612
+08:33:49 | INFO |   * New best: 1.397
+08:39:36 | INFO |   Ep  200/1000 | Ret: +0.1232 | Sharpe: 1.893 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+08:39:44 | INFO |   [VAL] Sharpe: 1.277 | Ret: +0.4098 | DD: -0.0612
+08:45:31 | INFO |   Ep  300/1000 | Ret: +0.1320 | Sharpe: 1.514 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+08:45:39 | INFO |   [VAL] Sharpe: 1.285 | Ret: +0.3926 | DD: -0.0636
+08:51:26 | INFO |   Ep  400/1000 | Ret: +0.1479 | Sharpe: 1.753 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+08:51:33 | INFO |   [VAL] Sharpe: 1.134 | Ret: +0.3222 | DD: -0.0612
+08:57:21 | INFO |   Ep  500/1000 | Ret: +0.0890 | Sharpe: 1.245 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+08:57:29 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3188 | DD: -0.1046
+09:03:18 | INFO |   Ep  600/1000 | Ret: -0.1782 | Sharpe: -1.017 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+09:03:27 | INFO |   [VAL] Sharpe: 1.481 | Ret: +0.4623 | DD: -0.0612
+09:03:27 | INFO |   * New best: 1.481
+09:09:14 | INFO |   Ep  700/1000 | Ret: +0.0946 | Sharpe: 1.524 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+09:09:22 | INFO |   [VAL] Sharpe: 1.266 | Ret: +0.3805 | DD: -0.0612
+09:15:10 | INFO |   Ep  800/1000 | Ret: +0.1582 | Sharpe: 1.892 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+09:15:17 | INFO |   [VAL] Sharpe: 1.333 | Ret: +0.3794 | DD: -0.0612
+09:21:04 | INFO |   Ep  900/1000 | Ret: +0.1017 | Sharpe: 1.191 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+09:21:12 | INFO |   [VAL] Sharpe: 1.051 | Ret: +0.3330 | DD: -0.0612
+09:26:56 | INFO |   Done. Best val Sharpe: 1.481
+09:26:56 | INFO |   -> best val Sharpe: 1.4814
+09:26:56 | INFO | 
+[18/20] Training: uarc | seed=456
+09:26:56 | INFO | [uarc | seed=456] Encoder JOINT (lr=1e-05) | device=mps
+09:26:58 | INFO |   Val embeddings: (648, 64)
+09:26:58 | INFO | 
+============================================================
+  Agent : uarc
+  Type  : IQN
+  Regime: posterior
+  Seed  : 456
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+09:26:59 | INFO |   Ep    0/1000 | Ret: +0.0429 | Sharpe: 0.528 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+09:32:28 | INFO |   Ep  100/1000 | Ret: +0.2178 | Sharpe: 2.321 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+09:32:37 | INFO |   [VAL] Sharpe: 1.138 | Ret: +0.3403 | DD: -0.0675
+09:32:37 | INFO |   * New best: 1.138
+09:38:24 | INFO |   Ep  200/1000 | Ret: +0.0558 | Sharpe: 0.652 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+09:38:32 | INFO |   [VAL] Sharpe: 1.091 | Ret: +0.3207 | DD: -0.0605
+09:44:21 | INFO |   Ep  300/1000 | Ret: +0.0996 | Sharpe: 1.180 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+09:44:29 | INFO |   [VAL] Sharpe: 1.209 | Ret: +0.3599 | DD: -0.0607
+09:44:29 | INFO |   * New best: 1.209
+09:50:16 | INFO |   Ep  400/1000 | Ret: +0.0971 | Sharpe: 1.272 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+09:50:25 | INFO |   [VAL] Sharpe: 1.263 | Ret: +0.3603 | DD: -0.0629
+09:50:25 | INFO |   * New best: 1.263
+09:56:13 | INFO |   Ep  500/1000 | Ret: -0.2044 | Sharpe: -1.490 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+09:56:21 | INFO |   [VAL] Sharpe: 1.383 | Ret: +0.4245 | DD: -0.0610
+09:56:21 | INFO |   * New best: 1.383
+10:02:09 | INFO |   Ep  600/1000 | Ret: +0.0587 | Sharpe: 0.795 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+10:02:18 | INFO |   [VAL] Sharpe: 1.254 | Ret: +0.3531 | DD: -0.0611
+10:08:05 | INFO |   Ep  700/1000 | Ret: +0.1051 | Sharpe: 1.192 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+10:08:14 | INFO |   [VAL] Sharpe: 1.205 | Ret: +0.3581 | DD: -0.0611
+10:14:02 | INFO |   Ep  800/1000 | Ret: +0.0817 | Sharpe: 1.094 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+10:14:10 | INFO |   [VAL] Sharpe: 1.109 | Ret: +0.3623 | DD: -0.0955
+10:19:57 | INFO |   Ep  900/1000 | Ret: +0.1308 | Sharpe: 1.609 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+10:20:05 | INFO |   [VAL] Sharpe: 1.060 | Ret: +0.3169 | DD: -0.0611
+10:25:49 | INFO |   Done. Best val Sharpe: 1.383
+10:25:49 | INFO |   -> best val Sharpe: 1.3831
+10:25:49 | INFO | 
+[19/20] Training: uarc | seed=789
+10:25:49 | INFO | [uarc | seed=789] Encoder JOINT (lr=1e-05) | device=mps
+10:25:51 | INFO |   Val embeddings: (648, 64)
+10:25:51 | INFO | 
+============================================================
+  Agent : uarc
+  Type  : IQN
+  Regime: posterior
+  Seed  : 789
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+10:25:52 | INFO |   Ep    0/1000 | Ret: +0.1121 | Sharpe: 1.251 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+10:31:21 | INFO |   Ep  100/1000 | Ret: +0.1212 | Sharpe: 1.935 | Loss: 0.00002 | Buf: 25,452 | eps: 0.270
+10:31:30 | INFO |   [VAL] Sharpe: 1.322 | Ret: +0.3640 | DD: -0.0971
+10:31:30 | INFO |   * New best: 1.322
+10:37:17 | INFO |   Ep  200/1000 | Ret: +0.1688 | Sharpe: 1.504 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+10:37:24 | INFO |   [VAL] Sharpe: 1.282 | Ret: +0.3963 | DD: -0.0845
+10:43:13 | INFO |   Ep  300/1000 | Ret: +0.1039 | Sharpe: 1.552 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+10:43:21 | INFO |   [VAL] Sharpe: 1.449 | Ret: +0.4166 | DD: -0.0623
+10:43:21 | INFO |   * New best: 1.449
+10:49:08 | INFO |   Ep  400/1000 | Ret: +0.0650 | Sharpe: 0.712 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+10:49:15 | INFO |   [VAL] Sharpe: 1.329 | Ret: +0.3747 | DD: -0.0619
+10:55:06 | INFO |   Ep  500/1000 | Ret: +0.0648 | Sharpe: 1.137 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+10:55:14 | INFO |   [VAL] Sharpe: 1.297 | Ret: +0.3883 | DD: -0.0629
+11:01:03 | INFO |   Ep  600/1000 | Ret: +0.1059 | Sharpe: 1.618 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+11:01:10 | INFO |   [VAL] Sharpe: 1.119 | Ret: +0.3138 | DD: -0.0614
+11:06:59 | INFO |   Ep  700/1000 | Ret: +0.1449 | Sharpe: 2.131 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+11:07:08 | INFO |   [VAL] Sharpe: 1.230 | Ret: +0.3813 | DD: -0.0613
+11:12:56 | INFO |   Ep  800/1000 | Ret: +0.1662 | Sharpe: 1.590 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+11:13:03 | INFO |   [VAL] Sharpe: 1.512 | Ret: +0.4231 | DD: -0.0613
+11:13:03 | INFO |   * New best: 1.512
+11:18:51 | INFO |   Ep  900/1000 | Ret: +0.1397 | Sharpe: 2.028 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+11:18:59 | INFO |   [VAL] Sharpe: 1.424 | Ret: +0.4484 | DD: -0.0612
+11:24:44 | INFO |   Done. Best val Sharpe: 1.512
+11:24:44 | INFO |   -> best val Sharpe: 1.5122
+11:24:44 | INFO | 
+[20/20] Training: uarc | seed=1337
+11:24:44 | INFO | [uarc | seed=1337] Encoder JOINT (lr=1e-05) | device=mps
+11:24:45 | INFO |   Val embeddings: (648, 64)
+11:24:45 | INFO | 
+============================================================
+  Agent : uarc
+  Type  : IQN
+  Regime: posterior
+  Seed  : 1337
+  Enc LR: 1e-05  Agent LR: 0.0001
+============================================================
+11:24:46 | INFO |   Ep    0/1000 | Ret: +0.0698 | Sharpe: 0.751 | Loss: 0.00000 | Buf: 252 | eps: 0.300
+11:30:17 | INFO |   Ep  100/1000 | Ret: +0.0250 | Sharpe: 0.220 | Loss: 0.00001 | Buf: 25,452 | eps: 0.270
+11:30:25 | INFO |   [VAL] Sharpe: 1.301 | Ret: +0.4030 | DD: -0.0601
+11:30:25 | INFO |   * New best: 1.301
+11:36:12 | INFO |   Ep  200/1000 | Ret: +0.0404 | Sharpe: 0.397 | Loss: 0.00001 | Buf: 50,652 | eps: 0.240
+11:36:21 | INFO |   [VAL] Sharpe: 1.171 | Ret: +0.3555 | DD: -0.0742
+11:42:09 | INFO |   Ep  300/1000 | Ret: +0.0262 | Sharpe: 0.360 | Loss: 0.00001 | Buf: 75,852 | eps: 0.210
+11:42:16 | INFO |   [VAL] Sharpe: 1.248 | Ret: +0.3681 | DD: -0.0740
+11:48:05 | INFO |   Ep  400/1000 | Ret: -0.1377 | Sharpe: -0.737 | Loss: 0.00001 | Buf: 100,000 | eps: 0.180
+11:48:13 | INFO |   [VAL] Sharpe: 1.275 | Ret: +0.3816 | DD: -0.0609
+11:54:01 | INFO |   Ep  500/1000 | Ret: +0.0295 | Sharpe: 0.365 | Loss: 0.00001 | Buf: 100,000 | eps: 0.150
+11:54:09 | INFO |   [VAL] Sharpe: 1.305 | Ret: +0.3818 | DD: -0.0610
+11:54:09 | INFO |   * New best: 1.305
+11:59:57 | INFO |   Ep  600/1000 | Ret: +0.1156 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.120
+12:00:06 | INFO |   [VAL] Sharpe: 1.038 | Ret: +0.2870 | DD: -0.0615
+12:05:54 | INFO |   Ep  700/1000 | Ret: +0.1279 | Sharpe: 1.430 | Loss: 0.00001 | Buf: 100,000 | eps: 0.090
+12:06:01 | INFO |   [VAL] Sharpe: 1.452 | Ret: +0.4014 | DD: -0.0611
+12:06:02 | INFO |   * New best: 1.452
+12:11:50 | INFO |   Ep  800/1000 | Ret: +0.1263 | Sharpe: 2.286 | Loss: 0.00001 | Buf: 100,000 | eps: 0.060
+12:11:58 | INFO |   [VAL] Sharpe: 1.183 | Ret: +0.3393 | DD: -0.0611
+12:18:02 | INFO |   Ep  900/1000 | Ret: +0.0158 | Sharpe: 0.224 | Loss: 0.00001 | Buf: 100,000 | eps: 0.030
+12:18:09 | INFO |   [VAL] Sharpe: 1.264 | Ret: +0.3857 | DD: -0.0719
+12:24:19 | INFO |   Done. Best val Sharpe: 1.452
+12:24:19 | INFO |   -> best val Sharpe: 1.4520
+12:24:19 | INFO | 
+  [uarc] Val Sharpe across 5 seeds: 1.512 +/- 0.117
+12:24:19 | INFO | 
+[3/4] Saving results...
+12:24:19 | INFO |   Saved -> outputs/stage3_results.csv
+12:24:19 | INFO | 
+============================================================
+12:24:19 | INFO | STAGE 3 SUMMARY — Val Sharpe (mean +/- std across 5 seeds)
+12:24:19 | INFO | ============================================================
+12:24:19 | INFO |   HMM Hard Label + DQN                Sharpe: 1.512 +/- 0.131  [1.383, 1.729]
+12:24:19 | INFO |   HMM Posterior + DQN                 Sharpe: 1.512 +/- 0.131  [1.383, 1.729]
+12:24:19 | INFO |   No Regime + IQN                     Sharpe: 1.512 +/- 0.131  [1.383, 1.729]
+12:24:19 | INFO |   UARC Full System (Ours)             Sharpe: 1.512 +/- 0.131  [1.383, 1.729]
+12:24:19 | INFO | ============================================================
+12:24:19 | INFO | 
+[4/4] Generating summary plot...
+12:24:19 | INFO |   Saved ablation plot -> outputs/figures/stage3/ablation_val_sharpe.png
+12:24:19 | INFO | 
+============================================================
+12:24:19 | INFO | STAGE 3 COMPLETE — Ready for Stage 4 (Backtesting)
+12:24:19 | INFO | ============================================================
+12:24:19 | INFO | 
+  Best checkpoints to use in Stage 4:
+12:24:19 | INFO |     no_regime_iqn                  seed=42  Sharpe=1.7291  -> outputs/models/agent_no_regime_iqn_seed42_best.pt
+12:24:19 | INFO |     hmm_hard_dqn                   seed=42  Sharpe=1.7290  -> outputs/models/agent_hmm_hard_dqn_seed42_best.pt
+12:24:19 | INFO |     hmm_posterior_dqn              seed=42  Sharpe=1.7290  -> outputs/models/agent_hmm_posterior_dqn_seed42_best.pt
+12:24:19 | INFO |     uarc                           seed=42  Sharpe=1.7291  -> outputs/models/agent_uarc_seed42_best.pt

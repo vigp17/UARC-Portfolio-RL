@@ -1,0 +1,6 @@
+data/raw/
+outputs/models/
+__pycache__/
+*.pkl
+*.pyc
+.DS_Store

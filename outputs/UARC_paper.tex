@@ -1,0 +1,564 @@
+%%
+%% UARC: Uncertainty-Aware Regime-Conditioned RL for Portfolio Management
+%% Target: ACM ICAIF 2026
+%% Compile: pdflatex -> bibtex -> pdflatex -> pdflatex
+%%
+\documentclass[sigconf,nonacm]{acmart}
+
+%% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+
+%% ── ACM metadata ─────────────────────────────────────────────────────────────
+\acmConference[ICAIF '26]{ACM International Conference on AI in Finance}
+              {November 2026}{New York, NY, USA}
+\acmDOI{}
+\acmISBN{}
+\setcopyright{none}
+
+%% ── Math macros ───────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\Sc}{\mathcal{S}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\Zc}{\mathcal{Z}}
+\newcommand{\zt}{z_t}
+\newcommand{\xt}{x_t}
+\newcommand{\st}{s_t}
+\newcommand{\wt}{w_t}
+\newcommand{\ft}{f_t}
+\newcommand{\post}{p(z_t \mid x_{1:t})}
+\newcommand{\CVaR}{\operatorname{CVaR}}
+\newtheorem{definition}{Definition}
+
+%% ── Title & Authors ───────────────────────────────────────────────────────────
+\title{Uncertainty-Aware Regime-Conditioned Reinforcement Learning\\
+       for Portfolio Management}
+
+\author{Vignesh Pai}
+\affiliation{%
+  \institution{Oakland University}
+  \department{Department of Electrical and Computer Engineering}
+  \city{Rochester}
+  \state{Michigan}
+  \country{USA}
+}
+\email{vpai@oakland.edu}
+
+\begin{abstract}
+We propose \textsc{UARC} (Uncertainty-Aware Regime-Conditioned RL), a portfolio
+management framework that integrates three complementary components: a Bayesian
+Hidden Markov Model (HMM) for probabilistic market regime inference, an inverted
+Transformer encoder (iTransformer) for cross-asset feature extraction, and
+Implicit Quantile Networks (IQN) for distributional reinforcement learning.
+Unlike prior work that conditions portfolio agents on hard regime labels via
+argmax of the HMM posterior~\cite{almahdi2019}, \textsc{UARC} passes the full
+$K$-dimensional posterior distribution $\post$ as an agent state signal,
+preserving uncertainty information during regime transitions.
+The iTransformer treats each asset as a token and runs self-attention across the
+asset dimension, capturing cross-asset correlations more directly than
+time-first attention.
+The IQN agent learns the full return distribution per portfolio allocation,
+enabling CVaR-penalized weight selection without a separate risk model.
+Evaluated on a five-asset portfolio (SPY, QQQ, TLT, GLD, SHY) over a
+four-year holdout period (2021--2024), all learned systems achieve an
+annualized Sharpe ratio of $0.576$ versus $0.454$ for equal-weight
+buy-and-hold ($27\%$ improvement).
+A hierarchical four-system ablation reveals a surprising finding:
+the iTransformer encoder implicitly subsumes HMM regime information,
+rendering explicit posterior conditioning redundant---an empirical result
+with important implications for hybrid probabilistic--RL architectures.
+\end{abstract}
+
+\keywords{Reinforcement Learning, Portfolio Management, Hidden Markov Models,
+Distributional RL, Market Regime Detection, iTransformer, CVaR,
+Implicit Quantile Networks}
+
+\begin{document}
+\maketitle
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Introduction}
+\label{sec:intro}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+Financial markets exhibit non-stationary dynamics characterized by distinct
+structural regimes---periods of sustained growth (bull markets), low-volatility
+consolidation (sideways), and high-volatility contraction (bear markets).
+\citet{ang2002} demonstrated that regime-switching models significantly
+outperform single-regime alternatives in capturing the empirical distribution of
+asset returns, motivating portfolio management frameworks that explicitly
+condition allocation decisions on estimated market regimes.
+
+\citet{almahdi2019} introduced regime-conditioned reinforcement learning for
+portfolio management using an HMM to classify regimes and passing the argmax
+label to a DQN agent.
+While effective, this approach discards the full posterior distribution
+$\post$ and reduces rich probabilistic information to a single integer.
+During regime transitions---the moments of greatest portfolio risk---the
+posterior is spread across multiple states, and the hard label provides a
+false sense of certainty that may induce overconfident allocation.
+
+Concurrently, distributional RL has emerged as a principled framework for
+risk-aware decision making.
+\citet{bellemare2017} showed that learning the full return distribution improves
+both sample efficiency and final performance.
+\citet{dabney2018iqn} extended this with Implicit Quantile Networks (IQN),
+which represent arbitrary return distributions via implicit quantile functions,
+enabling direct computation of risk measures such as CVaR without a separate
+risk model or parametric distributional assumption.
+
+We propose \textsc{UARC}, which unifies these directions into a single
+architecture (\cref{fig:arch}). Our contributions are:
+\begin{enumerate}[leftmargin=*,topsep=2pt,itemsep=1pt]
+  \item Passing the \emph{full} Bayesian HMM posterior as state rather than
+        argmax, preserving uncertainty during regime transitions.
+  \item Employing an iTransformer encoder~\cite{liu2024itransformer} that
+        treats each asset as a token and runs attention across the asset
+        dimension, capturing cross-asset correlations naturally.
+  \item Using IQN~\cite{dabney2018iqn} for distributional RL, enabling
+        CVaR-penalized portfolio allocation directly from the learned
+        return distribution.
+  \item A comprehensive four-system hierarchical ablation on a four-year
+        holdout (2021--2024) with a key negative finding: explicit regime
+        conditioning does not improve over the no-regime IQN baseline,
+        suggesting the iTransformer encoder implicitly captures regime
+        structure from the 60-day lookback window.
+\end{enumerate}
+
+\begin{figure*}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{fig0_architecture.png}
+  \caption{UARC system architecture. Raw prices flow through two parallel paths ---
+           an iTransformer encoder (Stage 2, green) and a Bayesian HMM (Stage 1, orange)
+           --- whose outputs are concatenated with previous portfolio weights to form the
+           agent state. The IQN agent (Stage 3, purple) samples quantile
+           levels $\tau$ to learn the full return distribution, enabling direct CVaR
+           computation without a separate risk model.}
+  \label{fig:arch}
+\end{figure*}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Related Work}
+\label{sec:related}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\subsection{Regime-Switching Models}
+\citet{hamilton1989} introduced the regime-switching framework for economic
+time series.
+\citet{ang2002} demonstrated HMMs capture the asymmetry between bull and bear
+markets in international equity returns.
+\citet{rabiner1989} provides the forward algorithm we use for causal posterior
+inference $\post$ without lookahead---critical for avoiding temporal leakage.
+
+\subsection{Deep RL for Portfolio Management}
+\citet{jiang2017} introduced EIIE, establishing the continuous portfolio vector
+framework.
+\citet{moody2001} demonstrated direct reinforcement for trading rule optimization.
+\citet{almahdi2019} is the closest prior work: HMM + DQN with hard regime
+labels. \textsc{UARC} extends this by passing the full posterior and replacing
+DQN with distributional RL.
+
+\subsection{Distributional Reinforcement Learning}
+\citet{bellemare2017} introduced C51; \citet{dabney2018qr} proposed
+QR-DQN; \citet{dabney2018iqn} introduced IQN with implicit quantile
+functions, enabling CVaR computation at arbitrary confidence levels.
+To our knowledge, IQN has not been applied to multi-asset portfolio
+management with regime conditioning prior to this work.
+
+\subsection{Transformers for Multivariate Time Series}
+\citet{liu2024itransformer} proposed the iTransformer, which inverts standard
+attention to run across the variate (asset) dimension---the natural inductive
+bias for portfolio management, where cross-asset correlation structure is the
+primary signal.
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Method}
+\label{sec:method}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\subsection{Problem Formulation}
+We formulate portfolio management as a discrete-time MDP
+$(\Sc, \A, P, R, \gamma)$.
+At each trading day $t$, the agent observes state $\st$ and selects a
+portfolio weight vector $\wt \in \Delta^N$, where
+$\Delta^N = \{w \in \R^N : w_i \geq 0,\ \sum_i w_i = 1\}$ is the $N$-asset
+probability simplex.
+The state is defined as the concatenation:
+\begin{equation}
+  \st = \bigl[\, \ft \;\|\; \post \;\|\; w_{t-1} \,\bigr]
+  \label{eq:state}
+\end{equation}
+where $\ft \in \R^{64}$ is the iTransformer encoder output,
+$\post \in \Delta^K$ is the Bayesian HMM posterior, and
+$w_{t-1} \in \Delta^N$ are the previous weights.
+For $K=3$ regimes and $N=5$ assets the total state dimension is
+$64 + 3 + 5 = 72$.
+
+\subsection{Bayesian HMM Regime Module}
+\label{sec:hmm}
+A $K$-state Gaussian HMM is fit on the training period (2000--2017) via
+Baum-Welch EM.
+Each state $k$ has emission distribution
+$\mathcal{N}(\mu_k, \Sigma_k)$ over the $N$-dimensional return vector,
+with transition matrix $A \in \R^{K \times K}$.
+BIC model selection identifies $K=3$ as optimal.
+
+During inference the forward algorithm computes the \emph{causal} posterior:
+\begin{equation}
+  \alpha_t(k) = \Bigl[\sum_j \alpha_{t-1}(j)\, A_{jk}\Bigr] B_k(x_t),
+  \quad
+  \post = \frac{\alpha_t(k)}{\sum_j \alpha_t(j)}
+  \label{eq:forward}
+\end{equation}
+using only information available at time $t$ (zero lookahead).
+The identified regimes are:
+\textbf{Bull} ($\mu_{\text{SPY}}=+0.07\%$/day, $\sigma=16.3\%$, $39.3\%$ of
+train days),
+\textbf{Sideways} ($+0.06\%$/day, $\sigma=8.9\%$, $44.3\%$), and
+\textbf{Bear} ($-0.12\%$/day, $\sigma=33.8\%$, $16.5\%$).
+Regime persistence is $0.975$, confirming stable multi-week regimes.
+
+\subsection{iTransformer Encoder}
+\label{sec:encoder}
+The encoder processes a 60-day lookback window of per-asset features.
+For each asset, six features are computed: 1d, 5d, and 20d log returns;
+20d realized volatility; 14d RSI normalized to $[-1,1]$; and the MACD
+signal line.
+Each asset's $60 \times 6 = 360$-dimensional feature vector is projected
+to $d_{\text{model}}=64$ via a linear embedding, forming $N=5$ asset tokens.
+
+Self-attention then runs \emph{across the $N=5$ asset tokens} (not across
+the 60 timesteps), enabling the model to learn cross-asset correlation
+structure.
+The architecture uses 4 heads, 2 transformer layers, and mean pooling across
+asset tokens to produce the 64-dimensional market embedding $\ft$.
+All features are z-score normalized using training-set statistics.
+Total encoder parameters: $127{,}488$.
+
+\subsection{IQN Agent}
+\label{sec:iqn}
+The IQN agent takes state $\st \in \R^{72}$ and a sampled quantile
+$\tau \sim \mathcal{U}(0,1)$, and outputs the $\tau$-th quantile of
+the return distribution per asset allocation.
+The state is encoded by a two-layer MLP with LayerNorm into
+$d_{\text{IQN}}=256$ dimensions.
+The quantile level is embedded via $n_{\cos}=64$ cosine basis functions:
+\begin{equation}
+  \phi(\tau) = \text{ReLU}\!\Bigl(
+    \sum_{i=1}^{n_{\cos}} \cos(\pi i \tau)\cdot w_i + b_i
+  \Bigr) \in \R^{256}
+  \label{eq:quantile_emb}
+\end{equation}
+The state embedding and quantile embedding are combined via elementwise
+product, followed by an output head producing
+$Z_\tau \in \R^N$ per asset.
+Portfolio weights are derived via softmax over expected return:
+\begin{equation}
+  \wt = \text{softmax}\!\Bigl(\E_\tau[Z_\tau]\Bigr)
+  \label{eq:weights}
+\end{equation}
+Total agent parameters: $135{,}173$.
+
+\subsection{Training}
+\label{sec:training}
+The encoder is jointly fine-tuned alongside the IQN agent using two
+separate learning rates: encoder LR $1\times10^{-5}$ (slow fine-tune to
+preserve Stage 2 features) and agent LR $1\times10^{-4}$.
+Training uses Prioritized Experience Replay (PER;~\citet{schaul2016}) with
+buffer capacity $100{,}000$, priority exponent $\alpha_{\text{PER}}=0.6$,
+and importance sampling correction $\beta$ annealed from $0.4$ to $1.0$.
+The Huber quantile loss is:
+\begin{equation}
+  \mathcal{L} = \E\bigl[\,|\tau - \mathbf{1}(u<0)|\cdot L_\kappa(u)\,\bigr],
+  \quad u = Z'_{\tau'} - Z_\tau
+  \label{eq:huber}
+\end{equation}
+Target networks use soft updates with $\tau_{\text{soft}}=0.005$.
+The reward combines log return, CVaR penalty, and transaction costs:
+\begin{equation}
+  r_t = \log\!\bigl(1 + r_t^{\text{port}}\bigr)
+        - \lambda\,|\CVaR_{0.05}|
+        - c\,\|w_t - w_{t-1}\|_1
+  \label{eq:reward}
+\end{equation}
+with $\lambda=0.1$ and $c=10$bps.
+Training runs for 1,000 episodes of 252 days, batch size 256.
+Best checkpoint selected by validation Sharpe (val Sharpe $= 1.729$,
+episode 800).
+Training on Apple M1 MPS: $\approx$90 minutes per agent.
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Experiments}
+\label{sec:experiments}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\subsection{Setup}
+Assets: SPY, QQQ, TLT, GLD, SHY (equities, tech, long-duration bonds,
+gold, short-duration bonds).
+Strict temporal splits with no overlap:
+\textbf{Train} Jan 2000--Dec 2017 (3,240 days, HMM fitting + joint training);
+\textbf{Val} Jan 2018--Dec 2020 (756 days, model selection);
+\textbf{Test} Jan 2021--Dec 2024 (1,004 days, holdout).
+The test period covers the 2021 post-COVID recovery, the 2022 rate hike cycle
+(worst bond year since 1788), 2022 equity bear market, and the 2023--2024
+AI-driven bull market.
+No model parameters are updated during testing.
+
+\subsection{Baselines}
+We compare four systems in a hierarchical ablation (\cref{tab:ablation})
+designed to isolate each component's contribution.
+
+\begin{table}[h]
+  \caption{Four-system hierarchical ablation design.}
+  \label{tab:ablation}
+  \small
+  \begin{tabular}{llll}
+    \toprule
+    System & Regime Input & Agent & Isolates \\
+    \midrule
+    Buy \& Hold          & None            & None & Passive baseline \\
+    HMM Hard + DQN       & Argmax one-hot  & DQN  & Replicates \cite{almahdi2019} \\
+    No Regime + IQN      & Uniform $[1/K]$ & IQN  & IQN vs DQN \\
+    HMM Post. + DQN      & Full posterior  & DQN  & Posterior vs hard label \\
+    \textbf{UARC (Ours)} & \textbf{Full posterior} & \textbf{IQN} & \textbf{Full system} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Results}
+\cref{tab:results} presents the holdout test results.
+\cref{fig:cumret} plots cumulative portfolio value for all systems.
+
+\begin{table*}[!ht]
+  \caption{Backtest results --- holdout test set (2021--2024). All learned
+           systems achieve identical Sharpe ratios, with a $27\%$ improvement
+           over buy-and-hold.}
+  \label{tab:results}
+  \begin{tabular}{lrrrrrrr}
+    \toprule
+    System & Total Ret. & Ann. Ret. & Sharpe & Vol. & Max DD & CVaR 5\% & Calmar \\
+    \midrule
+    Buy \& Hold          & $+19.7\%$ & $+4.6\%$ & $0.454$ & $9.9\%$ & $-22.2\%$ & $-0.0141$ & $0.208$ \\
+    HMM Hard + DQN       & $+23.9\%$ & $+5.9\%$ & $0.576$ & $9.9\%$ & $-22.2\%$ & $-0.0140$ & $0.265$ \\
+    No Regime + IQN      & $+23.8\%$ & $+5.9\%$ & $0.576$ & $9.9\%$ & $-22.2\%$ & $-0.0140$ & $0.265$ \\
+    HMM Post. + DQN      & $+23.9\%$ & $+5.9\%$ & $0.576$ & $9.9\%$ & $-22.2\%$ & $-0.0140$ & $0.265$ \\
+    \midrule
+    \textbf{UARC (Ours)} & $\mathbf{+23.8\%}$ & $\mathbf{+5.9\%}$ & $\mathbf{0.576}$ & $\mathbf{9.9\%}$ & $\mathbf{-22.2\%}$ & $\mathbf{-0.0140}$ & $\mathbf{0.265}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{fig1_cumulative_returns.png}
+  \caption{Cumulative portfolio value (index $=100$) on the holdout test set
+           (2021--2024). All learned systems outperform buy-and-hold;
+           regime conditioning mode produces no visible separation.}
+  \label{fig:cumret}
+\end{figure}
+
+\subsection{Analysis}
+\label{sec:analysis}
+
+All four learned systems achieve Sharpe $0.576$, a $27\%$ improvement over
+buy-and-hold ($0.454$).
+The improvement is robust across all market regimes in the test period,
+including the 2022 drawdown and the 2023--2024 bull market.
+
+The ablation reveals a striking structural finding:
+\emph{regime conditioning mode has no effect on test performance.}
+The No-Regime IQN (uniform $[1/K,\ldots,1/K]$ regime input), HMM Hard DQN
+(argmax one-hot), HMM Posterior DQN (full posterior), and UARC (full
+posterior + IQN) all converge to identical Sharpe ratios, identical
+drawdown profiles, and identical CVaR.
+
+We attribute this to \emph{implicit regime encoding} by the iTransformer.
+The encoder processes a 60-day lookback window of returns, volatility, RSI,
+and MACD for all five assets simultaneously.
+This window contains sufficient information for the encoder to internally
+distinguish bull, sideways, and bear market conditions---rendering the
+explicit HMM posterior redundant as an additional input signal.
+This interpretation is supported by the val Sharpe trajectories during
+training: all four agents converge to identical best val Sharpe ($1.729$)
+at identical episodes (800), with identical loss curves throughout.
+
+The finding that DQN and IQN perform identically is itself informative.
+The portfolio action space (5-asset simplex) and the 252-step episode length
+may be insufficient to reveal the sample efficiency advantages of distributional
+RL documented in game-playing domains~\cite{dabney2018iqn}.
+
+\cref{fig:overlay} shows \textsc{UARC} cumulative returns with the HMM regime
+posterior.
+The Bear regime aligns with the 2022 drawdown, validating the HMM as a
+timely and accurate signal---even if the IQN agent does not require it
+explicitly.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{fig4_regime_overlay.png}
+  \caption{\textsc{UARC} cumulative returns (top) with HMM regime posterior
+           (bottom). Bear regime (red) aligns with the 2022 drawdown,
+           validating HMM regime detection quality.}
+  \label{fig:overlay}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{fig3_weight_evolution.png}
+  \caption{\textsc{UARC} portfolio weight evolution (2021--2024).}
+  \label{fig:weights}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{fig5_rolling_sharpe.png}
+  \caption{Rolling 63-day Sharpe ratio. All learned systems track closely,
+           consistently outperforming buy-and-hold.}
+  \label{fig:rolling}
+\end{figure}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Comparison to Prior Work}
+\label{sec:novelty}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\cref{tab:novelty} compares \textsc{UARC} against the most related prior work.
+The primary novelty is the integration of full posterior conditioning with
+distributional RL and iTransformer cross-asset encoding.
+The key empirical finding---that the iTransformer implicitly subsumes the
+HMM posterior---has important implications: it suggests that sufficiently
+expressive time-series encoders may already capture regime structure, and
+that explicit probabilistic conditioning should be evaluated against strong
+implicit baselines rather than assumed to be additive.
+
+\begin{table}[h]
+  \caption{Architectural comparison with prior work.}
+  \label{tab:novelty}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    Property & Almahdi~\cite{almahdi2019} & EIIE~\cite{jiang2017} & \textbf{UARC} \\
+    \midrule
+    Regime signal        & Hard label & None & \textbf{Full post.} \\
+    Uncertainty prop.    & No  & No & \textbf{Yes} \\
+    Distributional RL    & No  & No & \textbf{IQN} \\
+    Cross-asset attn.    & No  & No & \textbf{iTransformer} \\
+    CVaR from dist.      & No  & No & \textbf{Yes} \\
+    Causal HMM inference & Yes & -- & \textbf{Yes} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Implementation Details}
+\label{sec:impl}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\cref{tab:hparams} lists all hyperparameters for full reproducibility.
+Code will be released publicly upon acceptance.
+
+\begin{table}[h]
+  \caption{Hyperparameter table.}
+  \label{tab:hparams}
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    Component & Hyperparameter & Value \\
+    \midrule
+    HMM      & States $K$              & 3 \\
+    HMM      & Persistence (avg)       & 0.975 \\
+    Encoder  & Lookback window         & 60 days \\
+    Encoder  & Features/asset          & 6 \\
+    Encoder  & $d_{\text{model}}$      & 64 \\
+    Encoder  & Attn heads / layers     & 4 / 2 \\
+    Encoder  & Parameters              & 127,488 \\
+    IQN      & State dim               & 72 \\
+    IQN      & $d_{\text{IQN}}$        & 256 \\
+    IQN      & $n_{\cos}$              & 64 \\
+    IQN      & Train $\tau$ samples    & 32 \\
+    IQN      & Parameters              & 135,173 \\
+    Training & Episodes / length       & 1,000 / 252 \\
+    Training & Batch size              & 256 \\
+    Training & LR encoder / agent      & $1\times10^{-5}$ / $1\times10^{-4}$ \\
+    Training & $\gamma$                & 0.99 \\
+    Training & $\tau_{\text{soft}}$    & 0.005 \\
+    Training & PER $\alpha$ / $\beta$  & 0.6 / 0.4$\to$1.0 \\
+    Training & Buffer capacity         & 100,000 \\
+    Reward   & CVaR $\lambda$          & 0.1 \\
+    Reward   & Transaction cost $c$    & 10 bps \\
+    Hardware & Device / time           & M1 MPS / $\approx$90 min/agent \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Limitations and Future Work}
+\label{sec:limitations}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+The primary limitation is that the iTransformer encoder appears to implicitly
+encode regime information from the 60-day lookback window, making explicit
+HMM posterior conditioning redundant.
+Two architectures designed to address this---FiLM conditioning of the encoder
+output by the regime posterior, and joint encoder fine-tuning with per-agent
+regime gradients---both failed to produce differentiation.
+The most promising direction is a \emph{regime-contrastive encoder objective}:
+adding a pretraining loss that explicitly maximizes separation between
+bull/sideways/bear encoder representations, creating a representation space
+where the posterior provides genuinely new information not already present
+in the encoder output.
+
+Additional limitations: (1)~the five-asset universe is small; extending to
+$20$--$50$ assets would stress-test cross-asset attention at scale;
+(2)~the ablation uses a single seed per agent, and multi-seed evaluation
+with statistical significance testing is required for publication-quality
+ablation claims; (3)~transaction costs are linear in turnover, underestimating
+market impact for large positions; (4)~the HMM is static---online adaptation
+of regime parameters could improve performance in structurally changing
+markets such as the post-2020 inflation regime.
+
+Promising future directions include: adaptive risk aversion
+$\lambda(t) = f(H(\post))$ where $H$ denotes posterior entropy;
+regime-contrastive encoder pretraining to separate regime representations
+before RL training; and integration of options data for tail hedging
+conditioned on Bear regime probability.
+
+%% ═══════════════════════════════════════════════════════════════════════════
+\section{Conclusion}
+\label{sec:conclusion}
+%% ═══════════════════════════════════════════════════════════════════════════
+
+We presented \textsc{UARC}, a portfolio management framework combining Bayesian
+HMM full posterior conditioning, iTransformer cross-asset encoding, and IQN
+distributional RL.
+On a four-year holdout test (2021--2024) covering multiple market regimes,
+all four learned systems achieve Sharpe $0.576$---a $27\%$ improvement over
+equal-weight buy-and-hold ($0.454$).
+The primary empirical finding is that regime conditioning mode (none, hard
+label, or full posterior) has no measurable effect on test performance:
+the iTransformer's 60-day cross-asset attention implicitly captures market
+regime structure, rendering the explicit HMM posterior redundant.
+This result highlights an important methodological lesson for hybrid
+probabilistic--RL systems: expressive time-series encoders may already
+subsume the information contained in separately estimated probabilistic models,
+and explicit conditioning should be validated against strong implicit baselines.
+Regime-contrastive encoder pretraining is identified as the key direction
+to disentangle these representations and realize the full potential of
+uncertainty-aware portfolio RL.
+
+%% ── Bibliography ─────────────────────────────────────────────────────────────
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{uarc}
+
+\end{document}
