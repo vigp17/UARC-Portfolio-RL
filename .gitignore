@@ -4,3 +4,11 @@ __pycache__/
 *.pkl
 *.pyc
 .DS_Store
+outputs/*.npy
+outputs/*.csv
+outputs/*.log
+outputs/models/
+data/raw/
+__pycache__/
+*.pyc
+.DS_Store
