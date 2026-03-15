@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 OUTPUT_DIR  = Path("outputs")
 MODEL_DIR   = OUTPUT_DIR / "models"
-FIGURES_DIR = OUTPUT_DIR / "figures" / "stage2"
+FIGURES_DIR = OUTPUT_DIR / "figures" / "encoder"
 N_FEATURES  = 6
 D_MODEL     = 64
 N_HEADS     = 4
