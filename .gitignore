@@ -12,3 +12,4 @@ data/raw/
 __pycache__/
 *.pyc
 .DS_Store
+outputs/figures/stage2/
