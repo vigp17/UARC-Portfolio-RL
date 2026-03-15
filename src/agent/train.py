@@ -317,7 +317,7 @@ class UARCTrainer:
             dtype=np.float32
         )
         for i, t in enumerate(t_indices):
-            t = max(int(t), L)  # clamp — never index before lookback
+            t = max(int(t), L)  
             window = enc_features[t - L: t]
             windows[i] = window.transpose(1, 0, 2).reshape(
                 self.config.n_assets, L * self.config.n_features
@@ -354,11 +354,11 @@ class UARCTrainer:
         K = self.config.n_regimes
         N = self.config.n_assets
 
-        t_idx_c = states[:, 0].numpy().astype(int)
+        t_idx_c = states[:, 0].cpu().numpy().astype(int)
         reg_c   = states[:, 1:1+K].to(self.device)
         wts_c   = states[:, 1+K:1+K+N].to(self.device)
 
-        t_idx_n = next_states[:, 0].numpy().astype(int)
+        t_idx_n = next_states[:, 0].cpu().numpy().astype(int)
         reg_n   = next_states[:, 1:1+K].to(self.device)
         wts_n   = next_states[:, 1+K:1+K+N].to(self.device)
 
@@ -403,7 +403,6 @@ class UARCTrainer:
             tp.data.copy_(tau * p.data + (1 - tau) * tp.data)
 
     def evaluate(self, n_episodes: int = 5) -> Dict[str, float]:
-        self.enc_emb_val = self._compute_embeddings(self.enc_features_val)
         all_r = []
         for _ in range(n_episodes):
             s    = self.val_env.reset(random_start=True)
