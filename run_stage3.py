@@ -4,7 +4,7 @@ run_stage3.py  —  Train all 4 UARC ablation agents across 5 seeds.
 Outputs:
   outputs/models/agent_{agent_type}_seed{N}_best.pt   — best checkpoint per run
   outputs/stage3_results.csv                          — full results table
-  outputs/figures/stage3/training_curves.png          — summary plot
+  outputs/figures/training/training_curves.png        — summary plot
 
 Usage:
   python run_stage3.py                  # all agents, all seeds
@@ -234,7 +234,7 @@ def plot_summary(df: pd.DataFrame):
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
-    out = Path("outputs/figures/stage3")
+    out = Path("outputs/figures/training")
     out.mkdir(parents=True, exist_ok=True)
     fig.savefig(out / "ablation_val_sharpe.png", dpi=150, bbox_inches="tight")
     plt.close(fig)

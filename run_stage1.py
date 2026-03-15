@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 OUTPUT_DIR  = Path("outputs")
 MODEL_PATH  = OUTPUT_DIR / "models" / "hmm_stage1.pkl"
-FIGURES_DIR = OUTPUT_DIR / "figures" / "stage1"
+FIGURES_DIR = OUTPUT_DIR / "figures" / "hmm"
 
 
 def main():

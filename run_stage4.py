@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 OUTPUT_DIR  = Path("outputs")
 MODEL_DIR   = OUTPUT_DIR / "models"
-FIGURES_DIR = OUTPUT_DIR / "figures" / "stage4"
+FIGURES_DIR = OUTPUT_DIR / "figures" / "backtest"
 N_FEATURES  = 6
 LOOKBACK    = 60
 
