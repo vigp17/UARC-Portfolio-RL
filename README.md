@@ -1,27 +1,34 @@
 # UARC: Uncertainty-Aware Regime-Conditioned RL for Portfolio Management
 
-Target venue: ACM ICAIF 2026
-
-A research framework combining Bayesian HMM regime detection, iTransformer cross-asset representation learning, and IQN distributional reinforcement learning.
+A systematic trading research project investigating whether regime-aware reinforcement learning improves portfolio allocation.
 
 ---
 
-## Overview
+## Summary
 
-Financial markets are non-stationary and exhibit regime shifts (bull, bear, sideways). This project investigates whether explicitly modeling regimes improves reinforcement learning-based portfolio allocation.
+This project evaluates a hybrid architecture combining:
 
-We propose UARC (Uncertainty-Aware Regime-Conditioned RL):
-- Uses full HMM posterior instead of hard labels
-- Learns cross-asset dependencies via iTransformer
-- Optimizes risk-aware policies using distributional RL (IQN)
+- Bayesian HMM (market regime detection)
+- iTransformer (cross-asset representation learning)
+- IQN (distributional reinforcement learning)
+
+across a **20-asset diversified portfolio** over a strict **out-of-sample test period (2021–2024)**.
 
 ---
 
-## Results
+## Key Result
 
-Evaluated on a 20-asset diversified portfolio across equities, bonds, commodities, and defensive assets.
+Regime conditioning does not improve performance.
 
-Holdout period: 2021–2024
+All learned agents — regardless of:
+- regime signal (none / hard / posterior)
+- RL algorithm (DQN vs IQN)
+
+converge to near-identical performance and allocations.
+
+---
+
+## Performance (Test Set: 2021–2024)
 
 System | Sharpe | Ann. Return | Max Drawdown
 -------|--------|------------|--------------
@@ -33,20 +40,11 @@ UARC (Ours) | 0.576 | +5.9% | -22.2%
 
 ---
 
-## Key Finding
-
-All learned systems converge to near-identical performance and allocations, closely matching a diversified baseline. Even with 20 assets and regime signals, policies collapse toward equal-weight-like allocations.
-
----
-
 ## Interpretation
 
-This is a negative but important result:
-- Explicit regime conditioning does not improve performance
-- Distributional RL (IQN) is the primary driver
-- Policies converge to diversified, high-entropy allocations
-
-Insight: strong representation learning (iTransformer) may already encode regime structure implicitly.
+- Representation learning dominates: the encoder implicitly captures regime structure  
+- Distributional RL stabilizes training but does not change allocations  
+- Policies collapse to diversified, near-equal-weight portfolios  
 
 ---
 
@@ -54,88 +52,53 @@ Insight: strong representation learning (iTransformer) may already encode regime
 
 <img src="outputs/figures/backtest/fig0_architecture.png" width="800"/>
 
-State = [Embedding (64) + Posterior (3) + Previous Weights (20)] → IQN Agent → Portfolio Weights (20 assets)
+State = Embedding (64) + Posterior (3) + Previous Weights (20) → IQN Agent → Portfolio Weights
 
 ---
 
-## Installation
+## Experimental Setup
 
-git clone https://github.com/YOUR_USERNAME/UARC-Portfolio-RL.git
-cd UARC-Portfolio-RL
-pip install -r requirements.txt
+- Assets: 20 (equities, bonds, commodities, defensive)
+- Frequency: Daily
+- Train: 2000–2017
+- Validation: 2018–2020
+- Test: 2021–2024 (strict holdout)
 
-Requirements: Python 3.10+, PyTorch 2.0+, hmmlearn, yfinance, pandas, numpy, matplotlib
-
----
-
-## Run Pipeline
-
-python run_stage1.py
-python run_stage2.py
-python run_stage3.py --seeds 42
-python run_stage4.py
-
-Quick test:
-python run_stage3.py --agent uarc --seeds 42
+No lookahead. No parameter updates during testing.
 
 ---
 
-## Project Structure
+## Pipeline
 
-src/
-  agent/
-  encoder/
-  hmm/
-  backtest/
-  data/
-
-outputs/
-  figures/
-  UARC_paper.tex
-  uarc.bib
-
-paper/
-  UARC_ICAIF2026_VigneshPai.pdf
-
-run_stage1.py
-run_stage2.py
-run_stage3.py
-run_stage4.py
-
----
-
-## Data
-
-Data is automatically downloaded via yfinance.
-
-Splits:
-Train: 2000–2017
-Val: 2018–2020
-Test: 2021–2024
-
----
-
-## Key Hyperparameters
-
-Component | Parameter | Value
-----------|----------|------
-HMM | States K | 3
-Encoder | Lookback | 60 days
-Encoder | d_model | 64
-IQN | State dim | 87
-IQN | Hidden dim | 256
-Training | Episodes | 1000
-Training | LR (enc/agent) | 1e-5 / 1e-4
-Reward | CVaR lambda | 0.1
-Hardware | Device | Apple M1 (MPS)
+python run_stage1.py  
+python run_stage2.py  
+python run_stage3.py --seeds 42  
+python run_stage4.py  
 
 ---
 
 ## Diagnostics
 
-- High entropy allocations (near-uniform)
-- Very low turnover
-- Minimal deviation from equal weight baseline
+- L1 distance to equal weight ≈ 0  
+- Portfolio entropy ≈ maximum  
+- Turnover ≈ 0  
+
+---
+
+## Limitations
+
+- Replay buffer does not store raw encoder inputs  
+- Linear transaction cost model  
+- Fixed asset universe  
+
+---
+
+## Future Work
+
+- Fix encoder–replay mismatch  
+- Scale to larger universes  
+- Adaptive risk aversion  
+- Regime-conditioned hedging  
 
 ---
 
@@ -144,18 +107,8 @@ Hardware | Device | Apple M1 (MPS)
 pytest tests/
 
 Outputs:
-outputs/backtest_results.csv
+outputs/backtest_results.csv  
 outputs/figures/
-
----
-
-## Future Work
-
-- Fix encoder–replay buffer mismatch
-- Scale to larger asset universe
-- Add realistic transaction costs
-- Adaptive risk aversion
-- Options-based tail hedging
 
 ---
 
