@@ -7,6 +7,8 @@ __pycache__/
 outputs/*.npy
 outputs/*.csv
 outputs/*.log
+outputs/*.tex
+outputs/*.bib
 outputs/models/
 data/raw/
 __pycache__/
