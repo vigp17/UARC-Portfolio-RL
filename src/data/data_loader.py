@@ -21,7 +21,13 @@ logger = logging.getLogger(__name__)
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 
-ASSETS = ["SPY", "QQQ", "TLT", "GLD", "SHY"]
+ASSETS = [
+    "SPY", "QQQ", "IWM", "DIA",
+    "EFA", "EEM",
+    "TLT", "IEF", "SHY", "LQD", "HYG",
+    "GLD", "SLV", "DBC", "USO",
+    "VNQ", "XLF", "XLK", "XLE", "XLU"
+]
 
 SPLIT_DATES = {
     "train_start":  "2000-01-01",

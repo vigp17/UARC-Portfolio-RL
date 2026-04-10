@@ -185,14 +185,37 @@ class IQNAgent(nn.Module):
             expected_return = quantile_values.mean(dim=1)
 
             if risk_aversion > 0:
-                n_tail   = max(1, int(0.05 * quantile_values.shape[1]))
-                sorted_q, _ = quantile_values.sort(dim=1)
-                cvar     = sorted_q[:, :n_tail, :].mean(dim=1)
+                cvar = self.compute_cvar(quantile_values, tau, alpha=0.05)
                 score    = expected_return - risk_aversion * cvar.abs()
             else:
                 score = expected_return
 
             return F.softmax(score, dim=-1)
+
+    def compute_cvar(
+        self,
+        quantile_values: torch.Tensor,
+        tau: torch.Tensor,
+        alpha: float = 0.05,
+    ) -> torch.Tensor:
+        """
+        Estimate per-asset CVaR from sampled quantiles.
+
+        Quantiles are first ordered by their corresponding tau values so we can
+        average the lower alpha-tail consistently across each batch element.
+        """
+        n_assets = quantile_values.shape[-1]
+        sorted_tau, order = tau.sort(dim=1)
+        gather_idx = order.unsqueeze(-1).expand(-1, -1, n_assets)
+        sorted_q = quantile_values.gather(1, gather_idx)
+
+        tail_mask = (sorted_tau <= alpha).unsqueeze(-1)
+        no_tail = tail_mask.sum(dim=1, keepdim=True) == 0
+        tail_mask[:, :1, :] |= no_tail
+
+        tail_count = tail_mask.sum(dim=1).clamp(min=1)
+        tail_sum = (sorted_q * tail_mask).sum(dim=1)
+        return tail_sum / tail_count
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)

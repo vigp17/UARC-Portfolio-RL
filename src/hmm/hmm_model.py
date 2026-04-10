@@ -103,7 +103,10 @@ class BayesianMarketHMM:
             random_state=self.random_state,
             verbose=False,
             tol=1e-4,
+            init_params="",
+            params="stmc",
         )
+        self._initialize_model_params(X_scaled)
         self.model.fit(X_scaled)
 
         self._is_fitted = True
@@ -113,6 +116,44 @@ class BayesianMarketHMM:
         self._label_regimes()
 
         return self
+
+    def _initialize_model_params(self, X_scaled: np.ndarray):
+        """
+        Seed HMM parameters without sklearn KMeans.
+
+        This avoids a native crash observed in the test environment during the
+        default hmmlearn initialization path while still giving EM a sensible
+        starting point.
+        """
+        rng = np.random.RandomState(self.random_state)
+        T, D = X_scaled.shape
+        K = self.n_regimes
+
+        self.model.startprob_ = np.full(K, 1.0 / K, dtype=np.float64)
+
+        transmat = np.full((K, K), 1.0 / K, dtype=np.float64)
+        np.fill_diagonal(transmat, 0.8)
+        off_diag = (1.0 - 0.8) / max(K - 1, 1)
+        transmat[~np.eye(K, dtype=bool)] = off_diag
+        self.model.transmat_ = transmat
+
+        if T >= K:
+            mean_idx = np.linspace(0, T - 1, K, dtype=int)
+        else:
+            mean_idx = rng.choice(T, size=K, replace=True)
+        jitter = rng.normal(scale=1e-2, size=(K, D))
+        self.model.means_ = X_scaled[mean_idx].astype(np.float64) + jitter
+
+        empirical_var = np.var(X_scaled, axis=0) + 1e-3
+        if self.covariance_type == "diag":
+            self.model.covars_ = np.tile(empirical_var, (K, 1)).astype(np.float64)
+        elif self.covariance_type == "full":
+            base_cov = np.diag(empirical_var)
+            self.model.covars_ = np.tile(base_cov[None, :, :], (K, 1, 1)).astype(np.float64)
+        elif self.covariance_type == "tied":
+            self.model.covars_ = np.diag(empirical_var).astype(np.float64)
+        else:
+            self.model.covars_ = np.full(K, float(empirical_var.mean()), dtype=np.float64)
 
     def _label_regimes(self):
         """

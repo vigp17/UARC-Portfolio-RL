@@ -50,9 +50,9 @@ class AgentType(Enum):
 
 @dataclass
 class TrainConfig:
-    n_assets:        int   = 5
+    n_assets:        int   = 20
     encoder_dim:     int   = 64
-    n_regimes:       int   = 3
+    n_regimes:       int   = 4
     lookback:        int   = 60
     n_features:      int   = 6
     d_model_enc:     int   = 64
@@ -121,15 +121,15 @@ class TradingEnvironment:
         enc_features:   np.ndarray,
         posteriors:     np.ndarray,
         prices:         np.ndarray,
-        regime_mode:    str,
-        n_regimes:      int,
-        episode_len:    int = 252,
         lookback:       int = 60,
+        episode_len:    int = 252,
+        regime_mode:    str = "posterior",
+        n_regimes:      Optional[int] = None,
     ):
         self.enc_features = enc_features
         self.posteriors   = posteriors
         self.regime_mode  = regime_mode
-        self.n_regimes    = n_regimes
+        self.n_regimes    = n_regimes or posteriors.shape[1]
         self.episode_len  = episode_len
         self.lookback     = lookback
         self.n_assets     = prices.shape[1]
@@ -162,8 +162,12 @@ class TradingEnvironment:
 
     def _get_state(self) -> Dict:
         window = self.enc_features[self.t - self.lookback: self.t]
+        encoder_input = window.transpose(1, 0, 2).reshape(
+            self.n_assets, self.lookback * window.shape[-1]
+        )
         return {
             "t_idx":            self.t,
+            "encoder_input":    encoder_input.astype(np.float32),
             "enc_window":       window.astype(np.float32),
             "regime_posterior": preprocess_regime(
                 self.posteriors[self.t], self.regime_mode, self.n_regimes

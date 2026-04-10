@@ -18,6 +18,10 @@ from src.encoder.itransformer import iTransformerEncoder
 from src.agent.iqn import IQNAgent
 from src.backtest.backtest import (
     backtest_buy_and_hold,
+    backtest_equal_weight,
+    backtest_risk_parity,
+    backtest_momentum,
+    backtest_mean_variance,
     backtest_hmm_hard_label_dqn,
     backtest_no_regime_iqn,
     backtest_hmm_posterior_dqn,
@@ -155,37 +159,49 @@ def main():
     # ── Step 3: Run backtests ──────────────────────────────────────────────
     logger.info("\n[3/5] Running backtests...")
 
-    logger.info("  [1/5] Buy & Hold...")
+    logger.info("  [1/9] Buy & Hold...")
     bh = backtest_buy_and_hold(prices_test_np, n_assets=len(ASSETS))
 
-    logger.info("  [2/5] HMM Hard Label + DQN...")
+    logger.info("  [2/9] Equal Weight...")
+    eq = backtest_equal_weight(prices_test_np, lookback=LOOKBACK)
+
+    logger.info("  [3/9] Risk Parity...")
+    rp = backtest_risk_parity(prices_test_np, lookback=LOOKBACK)
+
+    logger.info("  [4/9] Momentum...")
+    mom = backtest_momentum(prices_test_np, lookback=LOOKBACK)
+
+    logger.info("  [5/9] Mean-Variance...")
+    mv = backtest_mean_variance(prices_test_np, lookback=LOOKBACK)
+
+    logger.info("  [6/9] HMM Hard Label + DQN...")
     hard_dqn = backtest_hmm_hard_label_dqn(
         enc_hard_dqn, agent_hard_dqn, embs_hard_dqn, posteriors_test, prices_test_np,
         device=device, lookback=LOOKBACK, n_features=N_FEATURES,
         regime_mode="hard",
     )
 
-    logger.info("  [3/5] No Regime + IQN...")
+    logger.info("  [7/9] No Regime + IQN...")
     no_regime = backtest_no_regime_iqn(
         enc_no_regime, agent_no_regime, embs_no_regime, prices_test_np,
         device=device, lookback=LOOKBACK, n_features=N_FEATURES,
         n_regimes=K,
     )
 
-    logger.info("  [4/5] HMM Posterior + DQN...")
+    logger.info("  [8/9] HMM Posterior + DQN...")
     post_dqn = backtest_hmm_posterior_dqn(
         enc_post_dqn, agent_post_dqn, embs_post_dqn, posteriors_test, prices_test_np,
         device=device, lookback=LOOKBACK, n_features=N_FEATURES,
         regime_mode="posterior",
     )
 
-    logger.info("  [5/5] UARC Full System...")
+    logger.info("  [9/9] UARC Full System...")
     uarc = backtest_uarc_full(
         enc_uarc, agent_uarc, embs_uarc, posteriors_test, prices_test_np,
         device=device, lookback=LOOKBACK, n_features=N_FEATURES,
     )
 
-    results = [bh, hard_dqn, no_regime, post_dqn, uarc]
+    results = [bh, eq, rp, mom, mv, hard_dqn, no_regime, post_dqn, uarc]
 
     # ── Step 4: Print results ──────────────────────────────────────────────
     print_results_table(results)
@@ -263,7 +279,10 @@ def main():
             f"CVaR: {r.cvar_5:.4f}  MaxDD: {r.max_drawdown:.1%}{marker}"
         )
 
-    logger.info("\n  All checks passed.")
+    if all(checks.values()):
+        logger.info("\n  All checks passed.")
+    else:
+        logger.info("\n  Some checks produced warnings — review results above.")
     return results
 
 

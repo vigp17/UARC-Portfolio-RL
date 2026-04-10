@@ -14,6 +14,12 @@ import pandas as pd
 import torch
 from typing import List
 from dataclasses import dataclass
+from src.backtest.baselines import (
+    equal_weight_from_returns,
+    risk_parity_from_returns,
+    momentum_from_prices,
+    mean_variance_from_returns,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +74,28 @@ class BacktestResult:
         if len(self.weights_history) < 2:
             return 0.0
         return float(np.abs(np.diff(self.weights_history, axis=0)).sum(axis=1).mean())
+    
+    @property
+    def avg_l1_distance_to_equal_weight(self) -> float:
+        if len(self.weights_history) == 0:
+            return 0.0
+        n_assets = self.weights_history.shape[1]
+        eq = np.ones(n_assets, dtype=np.float32) / n_assets
+        return float(np.abs(self.weights_history - eq).sum(axis=1).mean())
+
+    @property
+    def avg_max_weight(self) -> float:
+        if len(self.weights_history) == 0:
+            return 0.0
+        return float(self.weights_history.max(axis=1).mean())
+
+    @property
+    def avg_weight_entropy(self) -> float:
+        if len(self.weights_history) == 0:
+            return 0.0
+        w = np.clip(self.weights_history, 1e-12, 1.0)
+        ent = -(w * np.log(w)).sum(axis=1)
+        return float(ent.mean())
 
     def to_dict(self) -> dict:
         return {
@@ -80,6 +108,9 @@ class BacktestResult:
             "CVaR (5%)":       f"{self.cvar_5:.4f}",
             "Calmar Ratio":    f"{self.calmar_ratio:.3f}",
             "Avg Turnover":    f"{self.avg_turnover:.3f}",
+            "L1 Dist. to EqW": f"{self.avg_l1_distance_to_equal_weight:.3f}",
+            "Avg Max Weight":  f"{self.avg_max_weight:.3f}",
+            "Avg Entropy":     f"{self.avg_weight_entropy:.3f}",
         }
 
 
@@ -114,6 +145,7 @@ def _run_agent_backtest(
 
     returns  = []
     wt_hist  = []
+    embed_records = []
     prev_w   = np.ones(n_assets, dtype=np.float32) / n_assets
 
     agent.eval()
@@ -128,9 +160,22 @@ def _run_agent_backtest(
             w      = agent.get_portfolio_weights(enc, reg, wts, risk_aversion=0.0).squeeze(0).cpu().numpy()
             r      = float(np.dot(w, log_rets[t + 1]))
             prev_w = w
+            embed_records.append({
+                "t": t,
+                "system": name,
+                "embedding": embeddings[t].copy(),
+                "regime": int(np.argmax(posteriors[t])),
+                "posterior": posteriors[t].copy(),
+                "weights": w.copy(),
+                "return": r,
+            })
 
             returns.append(r)
             wt_hist.append(w)
+
+        embed_df = pd.DataFrame(embed_records)
+        safe_name = name.lower().replace(" ", "_").replace("&", "and").replace("(", "").replace(")", "")
+        embed_df.to_pickle(f"outputs/encoder_embeddings_{safe_name}.pkl")
 
     return BacktestResult(
         name=name,
@@ -165,9 +210,36 @@ def backtest_buy_and_hold(
     log_rets[1:] = np.log(prices[1:] / (prices[:-1] + 1e-10))
     returns  = np.array([np.dot(weights[t-1], log_rets[t]) for t in range(1, T)])
     return BacktestResult(
-        name="Buy & Hold (Equal Weight)",
+        name="Equal Weight Buy-and-Hold",
         daily_returns=returns,
         weights_history=weights[1:],
+    )
+
+def backtest_equal_weight(
+    prices: np.ndarray,
+    lookback: int = 60,
+) -> BacktestResult:
+    T, n_assets = prices.shape
+
+    weights = np.ones((T, n_assets), dtype=np.float32) / n_assets
+
+    log_rets = np.zeros_like(prices)
+    log_rets[1:] = np.log(prices[1:] / (prices[:-1] + 1e-10))
+
+    returns = []
+    wt_hist = []
+
+    for t in range(1, T):
+        w = weights[t-1]
+        r = float(np.dot(w, log_rets[t]))
+
+        returns.append(r)
+        wt_hist.append(w)
+
+    return BacktestResult(
+        name="Equal Weight (Rebalanced)",
+        daily_returns=np.array(returns),
+        weights_history=np.array(wt_hist),
     )
 
 
@@ -238,6 +310,95 @@ def backtest_uarc_full(
         prices, device, regime_mode="posterior",
     )
 
+def backtest_classical_baseline(
+    name: str,
+    prices: np.ndarray,
+    strategy_fn,
+    lookback: int = 60,
+    uses_prices: bool = False,
+) -> BacktestResult:
+    """
+    Generic backtest loop for non-RL baselines.
+    strategy_fn takes either:
+      - returns_window -> weights
+      - prices_window  -> weights   (if uses_prices=True)
+    """
+    T, n_assets = prices.shape
+
+    log_rets = np.zeros_like(prices)
+    log_rets[1:] = np.log(prices[1:] / (prices[:-1] + 1e-10))
+
+    returns = []
+    wt_hist = []
+
+    for t in range(lookback, T - 1):
+        if uses_prices:
+            w = strategy_fn(prices[:t + 1])
+        else:
+            w = strategy_fn(log_rets[1:t + 1])
+
+        r = float(np.dot(w, log_rets[t + 1]))
+        returns.append(r)
+        wt_hist.append(w)
+
+    return BacktestResult(
+        name=name,
+        daily_returns=np.array(returns),
+        weights_history=np.array(wt_hist),
+    )
+
+def backtest_equal_weight(
+    prices: np.ndarray,
+    lookback: int = 60,
+) -> BacktestResult:
+    return backtest_classical_baseline(
+        name="Equal Weight",
+        prices=prices,
+        strategy_fn=equal_weight_from_returns,
+        lookback=lookback,
+        uses_prices=False,
+    )
+
+
+def backtest_risk_parity(
+    prices: np.ndarray,
+    lookback: int = 60,
+) -> BacktestResult:
+    return backtest_classical_baseline(
+        name="Risk Parity",
+        prices=prices,
+        strategy_fn=risk_parity_from_returns,
+        lookback=lookback,
+        uses_prices=False,
+    )
+
+
+def backtest_momentum(
+    prices: np.ndarray,
+    lookback: int = 60,
+) -> BacktestResult:
+    return backtest_classical_baseline(
+        name="Momentum",
+        prices=prices,
+        strategy_fn=lambda p: momentum_from_prices(p, lookback=lookback),
+        lookback=lookback,
+        uses_prices=True,
+    )
+
+
+def backtest_mean_variance(
+    prices: np.ndarray,
+    lookback: int = 60,
+) -> BacktestResult:
+    return backtest_classical_baseline(
+        name="Mean-Variance",
+        prices=prices,
+        strategy_fn=mean_variance_from_returns,
+        lookback=lookback,
+        uses_prices=False,
+    )
+
+
 
 # ---------------------------------------------------------------------------
 # Results table
@@ -253,4 +414,14 @@ def print_results_table(results: List[BacktestResult]):
     print("BACKTEST RESULTS — Test Set (2021-2024)")
     print("=" * 90)
     print(df.to_string())
+    print("=" * 90 + "\n")
+
+    print("Policy diagnostics:")
+    for r in results:
+        print(
+            f"  {r.name:<30} "
+            f"L1→EqW: {r.avg_l1_distance_to_equal_weight:.4f} | "
+            f"MaxW: {r.avg_max_weight:.4f} | "
+            f"Entropy: {r.avg_weight_entropy:.4f}"
+        )
     print("=" * 90 + "\n")

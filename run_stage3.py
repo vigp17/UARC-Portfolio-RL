@@ -138,7 +138,13 @@ def train_all(
                 f"\n[{done}/{total}] Training: {agent_type.value} | seed={seed}"
             )
 
-            config = TrainConfig.for_agent(agent_type, seed=seed)
+            config = TrainConfig.for_agent(
+                agent_type,
+                seed=seed,
+                n_assets=enc_tr.shape[1],
+                n_features=enc_tr.shape[2],
+                n_regimes=post_tr.shape[1],
+                )
 
             trainer = UARCTrainer(
                 config                  = config,
